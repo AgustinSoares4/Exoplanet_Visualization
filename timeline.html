@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Exoplanet Discoveries Timeline</title>
+  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <style>
+    /* Estilo para los botones */
+    .arrow-button {
+      background-color: #007bff; /* Azul */
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      transition: background-color 0.3s ease;
+    }
+
+    .arrow-button:hover {
+      background-color: #0056b3; /* Azul más oscuro */
+    }
+
+    /* Contenedor para centrar los botones */
+    .button-container {
+      display: flex;
+      justify-content: center;
+      margin-top: 20px;
+      gap: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div id="timeline" style="width: 100%; height: 600px;"></div>
+
+  <!-- Contenedor de botones -->
+  <div class="button-container">
+    <button id="prev" class="arrow-button">&larr;</button> <!-- Flecha izquierda -->
+    <button id="next" class="arrow-button">&rarr;</button> <!-- Flecha derecha -->
+  </div>
+
+  <script>
+    // Variables globales
+    let data = []; // Datos cargados desde el JSON
+    let currentIndex = -1; // Índice actual del año mostrado
+    let xValues = []; // Años de descubrimiento acumulados
+    let yValues = []; // Valores constantes para el eje Y
+
+    // Cargar los datos desde el archivo JSON
+    fetch('yearly_discoveries.json')
+      .then(response => response.json())
+      .then(jsonData => {
+        data = jsonData; // Guardar los datos cargados
+
+        // Inicializar la gráfica vacía
+        initializeTimeline();
+      });
+
+    // Función para inicializar la gráfica vacía
+    function initializeTimeline() {
+      const trace = {
+        x: [], // Sin puntos al inicio
+        y: [],
+        mode: 'lines+markers', // Línea conectada con puntos
+        type: 'scatter',
+        marker: { size: 10 },
+        text: [] // Sin información al inicio
+      };
+
+      const layout = {
+        title: 'Exoplanet Discoveries Timeline',
+        xaxis: {
+          title: 'Year of Discovery',
+          type: 'category' // Configurar el eje X como categórico (solo años naturales)
+        },
+        yaxis: { visible: false } // Ocultar el eje Y
+      };
+
+      Plotly.newPlot('timeline', [trace], layout);
+    }
+
+    // Función para actualizar la gráfica con el año actual
+    function updateTimeline() {
+      if (currentIndex >= 0 && currentIndex < data.length) {
+        // Agregar el año actual a los valores acumulados
+        xValues.push(data[currentIndex].disc_year);
+        yValues.push(1); // Valor constante para el eje Y
+
+        // Actualizar la gráfica
+        const trace = {
+          x: xValues,
+          y: yValues,
+          mode: 'lines+markers',
+          type: 'scatter',
+          marker: { size: 10 },
+          text: xValues.map((year, i) => `Year: ${year}<br>Discoveries: ${data[i].count}`) // Información adicional
+        };
+
+        const layout = {
+          title: 'Exoplanet Discoveries Timeline',
+          xaxis: {
+            title: 'Year of Discovery',
+            type: 'category' // Configurar el eje X como categórico (solo años naturales)
+          },
+          yaxis: { visible: false }
+        };
+
+        Plotly.newPlot('timeline', [trace], layout);
+      }
+    }
+
+    // Función para manejar el botón "Previous"
+    document.getElementById('prev').addEventListener('click', () => {
+      if (currentIndex > 0) {
+        currentIndex--;
+        xValues.pop(); // Eliminar el último año agregado
+        yValues.pop(); // Eliminar el último valor del eje Y
+        updateTimeline();
+      }
+    });
+
+    // Función para manejar el botón "Next"
+    document.getElementById('next').addEventListener('click', () => {
+      if (currentIndex < data.length - 1) {
+        currentIndex++;
+        updateTimeline();
+      }
+    });
+  </script>
+</body>
+</html>
