@@ -6,9 +6,9 @@ app = Flask(__name__)
 def index():
     return send_from_directory('.', 'timeline.html')
 
-@app.route('/yearly_discoveries.json')
+@app.route('/timeline.json')
 def timeline_data():
-    return send_from_directory('.', 'yearly_discoveries.json')
+    return send_from_directory('.', 'timeline.json')
 
 if __name__ == '__main__':
     app.run(debug=True)

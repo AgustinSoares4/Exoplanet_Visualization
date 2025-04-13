@@ -1,0 +1,182 @@
+[
+    {
+        "disc_year": 2011,
+        "pl_name": "Kepler-22 b",
+        "ESI": 0.52145244139836,
+        "pl_rade": 2.1
+    },
+    {
+        "disc_year": 2014,
+        "pl_name": "Kepler-138 d",
+        "ESI": 0.3631381927502117,
+        "pl_rade": 1.51
+    },
+    {
+        "disc_year": 2015,
+        "pl_name": "GJ 1132 b",
+        "ESI": 0.30458445212678603,
+        "pl_rade": 1.16
+    },
+    {
+        "disc_year": 2015,
+        "pl_name": "K2-18 b",
+        "ESI": 0.2508604817286924,
+        "pl_rade": 2.61
+    },
+    {
+        "disc_year": 2015,
+        "pl_name": "K2-18 b",
+        "ESI": 0.4309542116080668,
+        "pl_rade": 2.37
+    },
+    {
+        "disc_year": 2015,
+        "pl_name": "K2-3 c",
+        "ESI": 0.29204449153594114,
+        "pl_rade": 1.582
+    },
+    {
+        "disc_year": 2015,
+        "pl_name": "K2-3 c",
+        "ESI": 0.2582921007988512,
+        "pl_rade": 1.69
+    },
+    {
+        "disc_year": 2015,
+        "pl_name": "K2-3 d",
+        "ESI": 0.3571211606365053,
+        "pl_rade": 1.62
+    },
+    {
+        "disc_year": 2015,
+        "pl_name": "K2-3 d",
+        "ESI": 0.5732631813255169,
+        "pl_rade": 1.458
+    },
+    {
+        "disc_year": 2016,
+        "pl_name": "TRAPPIST-1 b",
+        "ESI": 0.2719457264348576,
+        "pl_rade": 1.086
+    },
+    {
+        "disc_year": 2016,
+        "pl_name": "TRAPPIST-1 c",
+        "ESI": 0.5212591842607962,
+        "pl_rade": 1.056
+    },
+    {
+        "disc_year": 2016,
+        "pl_name": "TRAPPIST-1 d",
+        "ESI": 0.7699490825848619,
+        "pl_rade": 0.772
+    },
+    {
+        "disc_year": 2017,
+        "pl_name": "LHS 1140 b",
+        "ESI": 0.2911021549973693,
+        "pl_rade": 1.727
+    },
+    {
+        "disc_year": 2017,
+        "pl_name": "LHS 1140 b",
+        "ESI": 0.3095281480291056,
+        "pl_rade": 1.73
+    },
+    {
+        "disc_year": 2017,
+        "pl_name": "TRAPPIST-1 e",
+        "ESI": 0.5405401709506509,
+        "pl_rade": 0.918
+    },
+    {
+        "disc_year": 2017,
+        "pl_name": "TRAPPIST-1 f",
+        "ESI": 0.2950385309406499,
+        "pl_rade": 1.045
+    },
+    {
+        "disc_year": 2017,
+        "pl_name": "TRAPPIST-1 g",
+        "ESI": 0.290924115352013,
+        "pl_rade": 1.127
+    },
+    {
+        "disc_year": 2018,
+        "pl_name": "LHS 1140 c",
+        "ESI": 0.25789008810745073,
+        "pl_rade": 1.272
+    },
+    {
+        "disc_year": 2019,
+        "pl_name": "LP 791-18 c",
+        "ESI": 0.26958846764934646,
+        "pl_rade": 2.438
+    },
+    {
+        "disc_year": 2020,
+        "pl_name": "LTT 3780 c",
+        "ESI": 0.2587504247283115,
+        "pl_rade": 2.3
+    },
+    {
+        "disc_year": 2020,
+        "pl_name": "TOI-1266 c",
+        "ESI": 0.349098640660824,
+        "pl_rade": 1.56
+    },
+    {
+        "disc_year": 2020,
+        "pl_name": "TOI-1266 c",
+        "ESI": 0.31224366169775447,
+        "pl_rade": 1.673
+    },
+    {
+        "disc_year": 2021,
+        "pl_name": "GJ 414 A b",
+        "ESI": 0.2693729961638043,
+        "pl_rade": 2.63
+    },
+    {
+        "disc_year": 2022,
+        "pl_name": "TOI-1452 b",
+        "ESI": 0.47346011162409485,
+        "pl_rade": 1.672
+    },
+    {
+        "disc_year": 2022,
+        "pl_name": "TOI-1468 c",
+        "ESI": 0.3335806927700899,
+        "pl_rade": 2.064
+    },
+    {
+        "disc_year": 2023,
+        "pl_name": "LP 791-18 d",
+        "ESI": 0.3327018602883466,
+        "pl_rade": 1.032
+    },
+    {
+        "disc_year": 2023,
+        "pl_name": "TOI-2095 b",
+        "ESI": 0.26760746683840486,
+        "pl_rade": 1.25
+    },
+    {
+        "disc_year": 2023,
+        "pl_name": "TOI-2095 c",
+        "ESI": 0.26811421042656725,
+        "pl_rade": 1.33
+    },
+    {
+        "disc_year": 2024,
+        "pl_name": "TOI-2088 b",
+        "ESI": 0.2752367469482352,
+        "pl_rade": 3.6831179
+    },
+    {
+        "disc_year": 2024,
+        "pl_name": "TOI-406.01",
+        "ESI": 0.25079410158036913,
+        "pl_rade": 2.08
+    }
+]

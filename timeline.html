@@ -3,133 +3,842 @@
 <head>
   <meta charset="UTF-8">
   <title>Exoplanet Discoveries Timeline</title>
-  <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+  <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
   <style>
-    /* Estilo para los botones */
-    .arrow-button {
-      background-color: #007bff; /* Azul */
-      color: white;
-      border: none;
+    body {
+      background-color: #000;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    /* Fondo espacial con estrellas */
+    #space-background {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: radial-gradient(ellipse at center, #0a0e23 0%, #000000 100%);
+      z-index: -10;
+      overflow: hidden;
+    }
+
+    .star {
+      position: absolute;
+      background-color: #fff;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
-      font-size: 24px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: background-color 0.3s ease;
+      opacity: 0.8;
+      animation: twinkle 4s infinite ease-in-out;
     }
 
-    .arrow-button:hover {
-      background-color: #0056b3; /* Azul más oscuro */
+    @keyframes twinkle {
+      0%, 100% { opacity: 0.3; }
+      50% { opacity: 1; }
     }
 
-    /* Contenedor para centrar los botones */
+    #timeline {
+      width: 100%;
+      height: 600px;
+      margin: 0 auto;
+      border: 2px solid #333;
+      border-radius: 10px;
+      box-shadow: 0 0 25px rgba(100, 150, 255, 0.3);
+      position: relative;
+      overflow: hidden;
+      cursor: default !important; /* Forzar cursor normal */
+    }
+
+    /* Asegurar que el cursor es normal en todas las partes de la gráfica */
+    .plotly, .plot-container, .svg-container, .main-svg, .drag, .nsewdrag, .cursor-crosshair {
+      cursor: default !important;
+    }
+
     .button-container {
       display: flex;
       justify-content: center;
       margin-top: 20px;
-      gap: 20px;
+      gap: 30px;
+    }
+
+    .arrow-button {
+      background-color: rgba(68, 68, 68, 0.7);
+      color: #fff;
+      border: 1px solid #777;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 28px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(100, 150, 255, 0.3);
+      transition: all 0.3s ease;
+    }
+
+    .arrow-button:hover {
+      background-color: rgba(100, 150, 255, 0.4);
+      transform: scale(1.1);
+      box-shadow: 0 0 20px rgba(100, 150, 255, 0.7);
+    }
+
+    .arrow-button:active {
+      transform: scale(0.95);
+    }
+    
+    /* Estilos para la tarjeta de planeta - Modificado para centrarse en la gráfica */
+    #planet-card {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) scale(0);
+      width: 300px;
+      height: auto;
+      max-height: 80vh;
+      background: linear-gradient(145deg, rgba(20, 40, 80, 0.95) 0%, rgba(10, 20, 40, 0.98) 100%);
+      border-radius: 15px;
+      border: 2px solid rgba(100, 150, 255, 0.6);
+      box-shadow: 0 0 40px rgba(100, 150, 255, 0.5), inset 0 0 30px rgba(100, 150, 255, 0.2);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      z-index: 1000;
+      opacity: 0;
+      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), 
+                  opacity 0.5s ease-in-out;
+      overflow: hidden;
+      pointer-events: none;
+    }
+    
+    #planet-card.visible {
+      transform: translate(-50%, -50%) scale(1);
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .planet-name {
+      font-size: 1.8em;
+      color: #FFD700;
+      margin-bottom: 10px;
+      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+    }
+    
+    .planet-image-container {
+      width: 180px;
+      height: 180px;
+      border-radius: 50%;
+      overflow: hidden;
+      margin: 10px 0;
+      border: 3px solid rgba(100, 150, 255, 0.6);
+      box-shadow: 0 0 20px rgba(100, 150, 255, 0.6);
+      background: radial-gradient(circle at 65% 15%, rgba(255, 255, 255, 0.1) 1px, transparent 3%),
+                  radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.2) 1px, transparent 4%),
+                  radial-gradient(circle at 70% 90%, rgba(255, 255, 255, 0.1) 1px, transparent 2%);
+      position: relative;
+    }
+    
+    .card-shine {
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 80%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 0.1) 25%,
+        rgba(255, 255, 255, 0.2) 50%,
+        rgba(255, 255, 255, 0.1) 75%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      transform: skewX(-15deg);
+      animation: card-shine-animation 3s ease-in-out infinite;
+    }
+    
+    @keyframes card-shine-animation {
+      0% { left: -100%; }
+      20% { left: 100%; }
+      100% { left: 100%; }
+    }
+    
+    .planet-year {
+      font-size: 1.1em;
+      color: #adf;
+      margin-bottom: 20px;
+      display: block;
+    }
+    
+    .planet-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      width: 100%;
+    }
+    
+    .stat {
+      background-color: rgba(30, 60, 100, 0.6);
+      border-radius: 8px;
+      padding: 10px 5px;
+      border: 1px solid rgba(100, 150, 255, 0.4);
+      transition: all 0.3s ease;
+    }
+    
+    .stat:hover {
+      background-color: rgba(40, 80, 120, 0.7);
+      transform: translateY(-3px);
+    }
+    
+    .stat-name {
+      color: #adf;
+      font-size: 0.85em;
+      margin-bottom: 5px;
+      display: block;
+    }
+    
+    .stat-value {
+      font-size: 1.1em;
+      font-weight: bold;
+    }
+    
+    .planet-type {
+      position: absolute;
+      top: 5px;
+      right: 5px;
+      background-color: rgba(255, 215, 0, 0.8);
+      color: #000;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-size: 0.7em;
+      font-weight: bold;
+    }
+    
+    #header {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 1.2em;
+      color: #adf;
+      text-shadow: 0 0 10px rgba(100, 150, 255, 0.8);
+    }
+    
+    /* Botón para cerrar la tarjeta */
+    .close-button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      width: 30px;
+      height: 30px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 16px;
+      color: white;
+    }
+    
+    .close-button:hover {
+      background-color: rgba(255, 255, 255, 0.3);
+      transform: scale(1.1);
+    }
+    
+    /* Overlay para cuando la carta está abierta */
+    #overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 900;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    
+    #overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    /* Contenedor principal */
+    .container {
+      display: flex;
+      position: relative;
+    }
+    
+    .main-content {
+      flex-grow: 1;
+      position: relative; /* Para posicionamiento absoluto de planet-card */
     }
   </style>
 </head>
 <body>
-  <div id="timeline" style="width: 100%; height: 600px;"></div>
-
-  <!-- Contenedor de botones -->
-  <div class="button-container">
-    <button id="prev" class="arrow-button">&larr;</button> <!-- Flecha izquierda -->
-    <button id="next" class="arrow-button">&rarr;</button> <!-- Flecha derecha -->
+  <!-- Fondo espacial -->
+  <div id="space-background"></div>
+  <div id="overlay"></div>
+  
+  <div id="header">
+    <h1>Exoplanet Discoveries Timeline</h1>
+    <p>Explore planets with high Earth Similarity Index (ESI) discovered over the years</p>
+  </div>
+  
+  <div class="container">
+    <div class="main-content">
+      <div id="timeline"></div>
+      
+      <!-- Tarjeta de planeta dentro de la gráfica -->
+      <div id="planet-card">
+        <div class="close-button">&times;</div>
+        <div class="planet-name">Planet Name</div>
+        <div class="planet-image-container">
+          <div class="planet-type">Earth-like</div>
+          <canvas id="planet-canvas" width="180" height="180"></canvas>
+          <div class="card-shine"></div>
+        </div>
+        <span class="planet-year">Discovered in: 2000</span>
+        <div class="planet-stats">
+          <div class="stat">
+            <span class="stat-name">ESI</span>
+            <span class="stat-value">0.00</span>
+          </div>
+          <div class="stat">
+            <span class="stat-name">Radius</span>
+            <span class="stat-value">0.0 R⊕</span>
+          </div>
+          <div class="stat">
+            <span class="stat-name">Temperature</span>
+            <span class="stat-value">Unknown</span>
+          </div>
+          <div class="stat">
+            <span class="stat-name">Distance</span>
+            <span class="stat-value">Unknown</span>
+          </div>
+        </div>
+      </div>
+  
+      <div class="button-container">
+        <button id="prev" class="arrow-button">&larr;</button>
+        <button id="next" class="arrow-button">&rarr;</button>
+      </div>
+    </div>
   </div>
 
   <script>
-    // Variables globales
-    let data = []; // Datos cargados desde el JSON
-    let currentIndex = -1; // Índice actual del año mostrado
-    let xValues = []; // Años de descubrimiento acumulados
-    let yValues = []; // Valores constantes para el eje Y
+    // Variable para controlar el temporizador de la tarjeta del planeta
+    let planetCardTimer = null;
+    
+    // Crear estrellas para el fondo espacial
+    function createStars() {
+      const background = document.getElementById('space-background');
+      const starCount = 200; // Número de estrellas
+      
+      for (let i = 0; i < starCount; i++) {
+        const star = document.createElement('div');
+        star.className = 'star';
+        
+        // Tamaño aleatorio (mayormente pequeñas)
+        const size = Math.random() * 3;
+        star.style.width = size + 'px';
+        star.style.height = size + 'px';
+        
+        // Posición aleatoria
+        star.style.left = Math.random() * 100 + '%';
+        star.style.top = Math.random() * 100 + '%';
+        
+        // Retraso aleatorio en la animación de parpadeo
+        star.style.animationDelay = Math.random() * 4 + 's';
+        
+        background.appendChild(star);
+      }
+    }
+    
+    // Ejecutar la creación de estrellas al cargar
+    createStars();
 
-    // Cargar los datos desde el archivo JSON
-    fetch('yearly_discoveries.json')
+    // Variables globales
+    let data = []; // Datos cargados desde timeline.json
+    let filteredData = []; // Datos filtrados (un planeta por año con el mayor ESI)
+    let currentYearIndex = 0; // Índice actual del año mostrado
+    let previousYearIndex = 0; // Para rastrear la dirección de navegación
+    
+    // Arrays para almacenar los datos de los planetas
+    const planetsData = [];
+    
+    // Color fijo para los planetas (azul brillante)
+    const PLANET_COLOR = 'rgb(80, 200, 255)';
+    // Color destacado para el planeta actual (amarillo brillante)
+    const HIGHLIGHT_COLOR = 'rgb(255, 215, 0)';
+    // Factor de aumento para el tamaño del planeta destacado
+    const SIZE_MULTIPLIER = 2.5;
+
+    // Inicializar la gráfica con ejes estáticos
+    const layout = {
+      title: {
+        text: '',
+        font: {
+          color: '#FFD700',
+          size: 24
+        }
+      },
+      paper_bgcolor: 'rgba(0,0,0,0)',
+      plot_bgcolor: 'rgba(0,0,0,0)',
+      xaxis: {
+        title: {
+          text: 'Year of Discovery',
+          font: {
+            color: '#adf',
+            size: 14
+          }
+        },
+        tickfont: {
+          color: '#adf'
+        },
+        showgrid: false,
+        tickmode: 'array',
+        tickvals: [2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
+        range: [2010, 2025]
+      },
+      yaxis: {
+        title: {
+          text: 'Earth Similarity Index (ESI)',
+          font: {
+            color: '#adf',
+            size: 14
+          }
+        },
+        tickfont: {
+          color: '#adf'
+        },
+        showgrid: false,
+        range: [0, 1]
+      },
+      hovermode: false, // Deshabilitar el hover
+      dragmode: false // Deshabilitar arrastrar
+    };
+
+    // Configuración para Plotly
+    const config = {
+      displayModeBar: false, // Ocultar barra de herramientas
+      responsive: true,      // Hacer la gráfica responsiva
+      scrollZoom: false,     // Deshabilitar el zoom con desplazamiento
+      showTips: false        // No mostrar consejos 
+    };
+
+    // Crear la gráfica inicial con ejes estáticos
+    Plotly.newPlot('timeline', [{
+      x: [],
+      y: [],
+      mode: 'markers',
+      type: 'scatter',
+      marker: {
+        size: [],
+        color: PLANET_COLOR,
+        showscale: false,
+        line: {
+          color: 'rgba(100, 150, 255, 0.5)',
+          width: 1
+        },
+        opacity: 0.8
+      },
+      text: [],
+      hoverinfo: 'none' // Deshabilitar la información al pasar por encima
+    }], layout, config);
+
+    // Cargar los datos desde timeline.json
+    fetch('timeline.json')
       .then(response => response.json())
       .then(jsonData => {
-        data = jsonData; // Guardar los datos cargados
+        data = jsonData;
 
-        // Inicializar la gráfica vacía
-        initializeTimeline();
+        // Filtrar los datos para obtener el planeta con el mayor ESI por año
+        const planetsByYear = {};
+        data.forEach(planet => {
+          const year = planet.disc_year;
+          if (!planetsByYear[year] || planet.ESI > planetsByYear[year].ESI) {
+            planetsByYear[year] = planet;
+          }
+        });
+
+        // Convertir el objeto en una lista ordenada por año
+        filteredData = Object.values(planetsByYear).sort((a, b) => a.disc_year - b.disc_year);
+        
+        // Preprocesar los datos de los planetas
+        for (let i = 0; i < filteredData.length; i++) {
+          const planet = filteredData[i];
+          planetsData.push({
+            x: planet.disc_year,
+            y: Math.max(0, planet.ESI || 0),
+            baseSize: (planet.pl_rade || 1) * 10,
+            text: `Planet: ${planet.pl_name}<br>Year: ${planet.disc_year}<br>ESI: ${planet.ESI.toFixed(2)}<br>Radius: ${planet.pl_rade || 'N/A'} Earth radii`
+          });
+        }
+        
+        // Inicializar la gráfica con el primer planeta
+        updateTimeline();
+        
+        // Ya no necesitamos el evento click, pues la tarjeta se mostrará automáticamente
+        
+        // Forzar cursor normal después de la carga
+        fixCursor();
       });
-
-    // Función para inicializar la gráfica vacía
-    function initializeTimeline() {
-      const trace = {
-        x: [], // Sin puntos al inicio
-        y: [],
-        mode: 'lines+markers', // Línea conectada con puntos
-        type: 'scatter',
-        marker: { size: 10 },
-        text: [] // Sin información al inicio
-      };
-
-      const layout = {
-        title: 'Exoplanet Discoveries Timeline',
-        xaxis: {
-          title: 'Year of Discovery',
-          type: 'category' // Configurar el eje X como categórico (solo años naturales)
-        },
-        yaxis: { visible: false } // Ocultar el eje Y
-      };
-
-      Plotly.newPlot('timeline', [trace], layout);
-    }
-
-    // Función para actualizar la gráfica con el año actual
+      
+    // Función para actualizar la línea de tiempo
     function updateTimeline() {
-      if (currentIndex >= 0 && currentIndex < data.length) {
-        // Agregar el año actual a los valores acumulados
-        xValues.push(data[currentIndex].disc_year);
-        yValues.push(1); // Valor constante para el eje Y
-
-        // Actualizar la gráfica
-        const trace = {
-          x: xValues,
-          y: yValues,
-          mode: 'lines+markers',
-          type: 'scatter',
-          marker: { size: 10 },
-          text: xValues.map((year, i) => `Year: ${year}<br>Discoveries: ${data[i].count}`) // Información adicional
-        };
-
-        const layout = {
-          title: 'Exoplanet Discoveries Timeline',
-          xaxis: {
-            title: 'Year of Discovery',
-            type: 'category' // Configurar el eje X como categórico (solo años naturales)
-          },
-          yaxis: { visible: false }
-        };
-
-        Plotly.newPlot('timeline', [trace], layout);
+      // Cancelar cualquier temporizador existente para mostrar la tarjeta
+      if (planetCardTimer) {
+        clearTimeout(planetCardTimer);
       }
+      
+      // Cerrar la tarjeta si está abierta
+      closePlanetCard();
+      
+      if (currentYearIndex >= 0 && currentYearIndex < filteredData.length) {
+        const planet = filteredData[currentYearIndex];
+        
+        // Determinar dirección de navegación
+        const isForward = currentYearIndex >= previousYearIndex;
+        previousYearIndex = currentYearIndex;
+        
+        // Crear arrays para mostrar solo hasta el índice actual
+        const visibleX = [];
+        const visibleY = [];
+        const visibleSizes = [];
+        const visibleColors = [];
+        const visibleTexts = [];
+        
+        // Acumular solo hasta el índice actual
+        for (let i = 0; i <= currentYearIndex; i++) {
+          visibleX.push(planetsData[i].x);
+          visibleY.push(planetsData[i].y);
+          
+          // Si es el planeta actual, hacerlo más grande y destacarlo
+          if (i === currentYearIndex) {
+            visibleSizes.push(planetsData[i].baseSize * SIZE_MULTIPLIER);
+            visibleColors.push(HIGHLIGHT_COLOR);
+          } else {
+            visibleSizes.push(planetsData[i].baseSize);
+            visibleColors.push(PLANET_COLOR);
+          }
+          
+          visibleTexts.push(planetsData[i].text);
+        }
+        
+        // Actualizar la gráfica con los planetas visibles - con animación más simple
+        Plotly.react('timeline', [{
+          x: visibleX,
+          y: visibleY,
+          mode: 'markers',
+          type: 'scatter',
+          marker: {
+            size: visibleSizes,
+            color: visibleColors,
+            showscale: false,
+            line: {
+              color: 'rgba(100, 150, 255, 0.5)',
+              width: 1
+            }
+          },
+          text: visibleTexts,
+          hoverinfo: 'none'  // Deshabilitar el hover
+        }], layout, {
+          transition: {
+            duration: 800,
+            easing: 'cubic-in-out'
+          },
+          frame: {
+            duration: 800
+          }
+        });
+        
+        // Forzar cursor normal después de actualizar
+        setTimeout(fixCursor, 100);
+        
+        // Configurar temporizador para mostrar la tarjeta después de 2 segundos
+        planetCardTimer = setTimeout(() => {
+          showPlanetCard(planet);
+        }, 1000);
+      } else {
+        console.error('Invalid year index:', currentYearIndex);
+      }
+    }
+    
+    // Función para forzar el cursor normal
+    function fixCursor() {
+      const elements = document.querySelectorAll('.main-svg, .nsewdrag, .nwsedrag, .drag, .cursor-crosshair, .plotly, .svg-container');
+      elements.forEach(el => {
+        if (el) el.style.cursor = 'default';
+      });
+    }
+    
+    // Función para mostrar y animar la tarjeta del planeta
+    function showPlanetCard(planet) {
+      const planetCard = document.getElementById('planet-card');
+      const overlay = document.getElementById('overlay');
+      
+      // Actualizar contenido
+      planetCard.querySelector('.planet-name').textContent = planet.pl_name;
+      planetCard.querySelector('.planet-year').textContent = `Discovered in ${planet.disc_year}`;
+      
+      const stats = planetCard.querySelectorAll('.stat-value');
+      stats[0].textContent = planet.ESI.toFixed(2);
+      stats[1].textContent = planet.pl_rade ? `${planet.pl_rade.toFixed(1)} R⊕` : 'Unknown';
+      stats[2].textContent = planet.pl_eqt ? `${planet.pl_eqt} K` : 'Unknown';
+      stats[3].textContent = planet.sy_dist ? `${planet.sy_dist.toFixed(1)} pc` : 'Unknown';
+      
+      // Determinar el tipo de planeta según el ESI
+      const planetType = document.querySelector('.planet-type');
+      if (planet.ESI >= 0.8) {
+        planetType.textContent = "Very Earth-like";
+        planetType.style.backgroundColor = "rgba(0, 255, 0, 0.8)";
+      } else if (planet.ESI >= 0.6) {
+        planetType.textContent = "Earth-like";
+        planetType.style.backgroundColor = "rgba(255, 215, 0, 0.8)";
+      } else {
+        planetType.textContent = "Potentially habitable";
+        planetType.style.backgroundColor = "rgba(255, 165, 0, 0.8)";
+      }
+      
+      // Generar imagen del planeta
+      generatePlanetImage(planet);
+      
+      // Mostrar la tarjeta y el overlay con animación
+      overlay.classList.add('active');
+      planetCard.classList.add('visible');
+    }
+    
+    // Función para cerrar la tarjeta del planeta
+    function closePlanetCard() {
+      const planetCard = document.getElementById('planet-card');
+      const overlay = document.getElementById('overlay');
+      
+      planetCard.classList.remove('visible');
+      overlay.classList.remove('active');
+    }
+    
+    // Configurar el evento de cierre de la tarjeta
+    document.querySelector('.close-button').addEventListener('click', closePlanetCard);
+    document.getElementById('overlay').addEventListener('click', closePlanetCard);
+
+    // Función para generar una imagen de planeta basada en sus características
+    function generatePlanetImage(planet) {
+      const canvas = document.getElementById('planet-canvas');
+      const ctx = canvas.getContext('2d');
+      const width = canvas.width;
+      const height = canvas.height;
+      
+      // Limpiar el canvas
+      ctx.clearRect(0, 0, width, height);
+      
+      // Calcular el color base del planeta basado en el ESI
+      let r, g, b;
+      if (planet.ESI >= 0.8) {
+        // Muy similar a la Tierra
+        r = 30 + Math.random() * 50;
+        g = 100 + Math.random() * 80;
+        b = 180 + Math.random() * 60;
+      } else if (planet.ESI >= 0.6) {
+        // Bastante similar
+        r = 70 + Math.random() * 60;
+        g = 140 + Math.random() * 60;
+        b = 100 + Math.random() * 80;
+      } else {
+        // Menos similar
+        r = 140 + Math.random() * 100;
+        g = 80 + Math.random() * 80;
+        b = 40 + Math.random() * 50;
+      }
+      
+      // Radio del planeta
+      const radius = width / 2 - 2;
+      
+      // Dibujar el planeta base (círculo)
+      const gradient = ctx.createRadialGradient(
+        width / 2, height / 2, 0,
+        width / 2, height / 2, radius
+      );
+      
+      // Centro más brillante, borde más oscuro
+      gradient.addColorStop(0, `rgba(${r+30}, ${g+30}, ${b+30}, 1)`);
+      gradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 1)`);
+      gradient.addColorStop(0.9, `rgba(${r*0.7}, ${g*0.7}, ${b*0.7}, 1)`);
+      gradient.addColorStop(1, `rgba(${r*0.5}, ${g*0.5}, ${b*0.5}, 1)`);
+      
+      ctx.beginPath();
+      ctx.arc(width / 2, height / 2, radius, 0, Math.PI * 2);
+      ctx.fillStyle = gradient;
+      ctx.fill();
+      
+      // Agregar características basadas en el planeta
+      if (planet.ESI >= 0.7) {
+        ctx.globalCompositeOperation = "overlay";
+        
+        // Dibujar "continentes" con formas orgánicas
+        const numberOfContinents = 3 + Math.floor(Math.random() * 5);
+        
+        ctx.fillStyle = `rgba(${r*0.7}, ${g*1.3}, ${b*0.7}, 0.5)`;
+        
+        for (let i = 0; i < numberOfContinents; i++) {
+          // Punto central del continente
+          const angle = Math.random() * Math.PI * 2;
+          const distFromCenter = radius * (0.2 + Math.random() * 0.7);
+          const x = width/2 + Math.cos(angle) * distFromCenter;
+          const y = height/2 + Math.sin(angle) * distFromCenter;
+          
+          // Tamaño del continente
+          const continentSize = radius * (0.2 + Math.random() * 0.3);
+          
+          // Dibujar forma irregular
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          
+          for (let j = 0; j < 8; j++) {
+            const ang = (j / 8) * Math.PI * 2;
+            const rad = continentSize * (0.7 + Math.random() * 0.6);
+            const xPoint = x + Math.cos(ang) * rad;
+            const yPoint = y + Math.sin(ang) * rad;
+            ctx.lineTo(xPoint, yPoint);
+          }
+          
+          ctx.closePath();
+          ctx.fill();
+        }
+      }
+      else {
+        ctx.globalCompositeOperation = "overlay";
+        
+        // Número de bandas
+        const numberOfBands = 3 + Math.floor(Math.random() * 4);
+        
+        for (let i = 0; i < numberOfBands; i++) {
+          // Ancho aleatorio para cada banda
+          const bandWidth = radius * (0.1 + Math.random() * 0.2);
+          const bandPos = -radius + (i * radius * 2 / numberOfBands);
+          
+          // Color aleatorio para la banda
+          const bandR = Math.min(255, r * (0.8 + Math.random() * 0.6));
+          const bandG = Math.min(255, g * (0.8 + Math.random() * 0.6));
+          const bandB = Math.min(255, b * (0.8 + Math.random() * 0.6));
+          
+          ctx.fillStyle = `rgba(${bandR}, ${bandG}, ${bandB}, 0.5)`;
+          
+          ctx.beginPath();
+          ctx.ellipse(width/2, height/2, radius, bandWidth, 0, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+      
+      // Restaurar modo de composición
+      ctx.globalCompositeOperation = "source-over";
+      
+      // Agregar brillo/atmósfera
+      const glowGradient = ctx.createRadialGradient(
+        width / 2, height / 2, radius * 0.8,
+        width / 2, height / 2, radius + 10
+      );
+      glowGradient.addColorStop(0, `rgba(${r}, ${g}, ${b}, 0)`);
+      glowGradient.addColorStop(0.5, `rgba(${r}, ${g}, ${b}, 0.03)`);
+      glowGradient.addColorStop(0.8, `rgba(${r}, ${g}, ${b}, 0.05)`);
+      glowGradient.addColorStop(1, `rgba(${r}, ${g}, ${b}, 0)`);
+      
+      ctx.beginPath();
+      ctx.arc(width / 2, height / 2, radius + 10, 0, Math.PI * 2);
+      ctx.fillStyle = glowGradient;
+      ctx.fill();
+      
+      // Agregar iluminación en un lado
+      const highlightGradient = ctx.createRadialGradient(
+        width / 2 - radius * 0.5, height / 2 - radius * 0.5, 0,
+        width / 2, height / 2, radius
+      );
+      highlightGradient.addColorStop(0, `rgba(255, 255, 255, 0.2)`);
+      highlightGradient.addColorStop(0.5, `rgba(255, 255, 255, 0.05)`);
+      highlightGradient.addColorStop(1, `rgba(255, 255, 255, 0)`);
+      
+      ctx.globalCompositeOperation = "overlay";
+      ctx.beginPath();
+      ctx.arc(width / 2, height / 2, radius, 0, Math.PI * 2);
+      ctx.fillStyle = highlightGradient;
+      ctx.fill();
     }
 
     // Función para manejar el botón "Previous"
     document.getElementById('prev').addEventListener('click', () => {
-      if (currentIndex > 0) {
-        currentIndex--;
-        xValues.pop(); // Eliminar el último año agregado
-        yValues.pop(); // Eliminar el último valor del eje Y
+      if (currentYearIndex > 0) {
+        currentYearIndex--;
         updateTimeline();
+        animateButton('prev');
+      } else {
+        shakeButton('prev');
       }
     });
 
     // Función para manejar el botón "Next"
     document.getElementById('next').addEventListener('click', () => {
-      if (currentIndex < data.length - 1) {
-        currentIndex++;
+      if (currentYearIndex < filteredData.length - 1) {
+        currentYearIndex++;
         updateTimeline();
+        animateButton('next');
+      } else {
+        shakeButton('next');
       }
+    });
+    
+    // Función para animar un botón cuando se hace clic
+    function animateButton(buttonId) {
+      const button = document.getElementById(buttonId);
+      button.style.transform = 'scale(1.2)';
+      button.style.boxShadow = '0 0 25px rgba(100, 150, 255, 0.8)';
+      
+      setTimeout(() => {
+        button.style.transform = 'scale(1)';
+        button.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(100, 150, 255, 0.3)';
+      }, 200);
+    }
+    
+    // Función para agitar un botón cuando se llega al límite
+    function shakeButton(buttonId) {
+      const button = document.getElementById(buttonId);
+      button.style.animation = 'shake 0.5s';
+      
+      setTimeout(() => {
+        button.style.animation = '';
+      }, 500);
+    }
+    
+    // Añadir animación de agitar
+    const styleElement = document.createElement('style');
+    styleElement.textContent = `
+      @keyframes shake {
+        0% { transform: translateX(0); }
+        25% { transform: translateX(-6px); }
+        50% { transform: translateX(6px); }
+        75% { transform: translateX(-6px); }
+        100% { transform: translateX(0); }
+      }
+    `;
+    document.head.appendChild(styleElement);
+    
+    // Asegurar cursor normal en todo momento
+    window.addEventListener('load', () => {
+      setTimeout(fixCursor, 500);
+      setTimeout(fixCursor, 1000);
+      setTimeout(fixCursor, 2000);
+    });
+    
+    // Observer para mantener el cursor normal cuando cambia el DOM
+    const observer = new MutationObserver(fixCursor);
+    
+    // Iniciar observación después de cargar la página
+    window.addEventListener('load', () => {
+      const timeline = document.getElementById('timeline');
+      observer.observe(timeline, { childList: true, subtree: true });
     });
   </script>
 </body>
