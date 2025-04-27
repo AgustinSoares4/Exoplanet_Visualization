@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 
 # Load the dataset (date: 2025.04.03_15.51.33)
-df = pd.read_csv("PS_exoplanets.csv", comment="#")
+df = pd.read_csv("nasa_all.csv", comment="#")
 
 # Earth reference values and weights
 earth = {
@@ -58,11 +58,9 @@ def calculate_esi(row):
 # Apply the ESI function across the entire dataset
 df['ESI'] = df.apply(calculate_esi, axis=1)
 
-# Filter planets with ESI >= 0.25
-df_filtered = df[df['ESI'] >= 0.25]
 
 # Save results to CSV
-df_filtered.to_csv("earth_like_exoplanets.csv", index=False)
+df.to_csv("all_exo.csv", index=False)
 
 # Print count
-print(f"🌍 Filtered {len(df_filtered)} Earth-like exoplanets with ESI ≥ 0.25")
+print(f"🌍 Filtered {len(df)} Earth-like exoplanets with ESI ≥ 0.25")

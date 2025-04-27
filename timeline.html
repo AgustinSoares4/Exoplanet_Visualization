@@ -1,2062 +1,2568 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Exoplanet Discoveries Timeline</title>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-  <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
-  <style>
-    /* ===== ESTILOS GENERALES ===== */
-    body {
-      background-color: #000;
-      color: #fff;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 20px;
-    }
-
-    /* ===== FONDO ESPACIAL ===== */
-    /* ===== FONDO ESPACIAL MEJORADO ===== */
-    #space-background {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: radial-gradient(ellipse at center, #0a1a3f 0%, #000000 100%);
-      z-index: -10;
-      overflow: hidden;
-    }
-
-    .nebula {
-      position: absolute;
-      border-radius: 50%;
-      filter: blur(60px);
-      opacity: 0.3;
-      background: radial-gradient(circle at center, rgba(255,100,100,0.3) 0%, rgba(0,0,0,0) 70%);
-      animation: pulse 15s infinite alternate ease-in-out;
-    }
-
-    .nebula:nth-child(2n) {
-      background: radial-gradient(circle at center, rgba(100,100,255,0.3) 0%, rgba(0,0,0,0) 70%);
-      animation-delay: 5s;
-    }
-
-    .nebula:nth-child(3n) {
-      background: radial-gradient(circle at center, rgba(100,255,100,0.2) 0%, rgba(0,0,0,0) 70%);
-      animation-delay: 7s;
-    }
-
-    @keyframes pulse {
-      0%, 100% { opacity: 0.2; transform: scale(1); }
-      50% { opacity: 0.4; transform: scale(1.1); }
-    }
-
-    .star {
-      position: absolute;
-      background-color: #fff;
-      border-radius: 50%;
-      animation: twinkle 4s infinite ease-in-out;
-    }
-
-    .star-large {
-      width: 2px !important;
-      height: 2px !important;
-      box-shadow: 0 0 8px 2px rgba(255,255,255,0.8);
-    }
-
-    @keyframes twinkle {
-      0%, 100% { opacity: 0.3; box-shadow: 0 0 5px 1px rgba(255,255,255,0.3); }
-      50% { opacity: 1; box-shadow: 0 0 10px 2px rgba(255,255,255,0.8); }
-    }
-
-    .shooting-star {
-      position: absolute;
-      width: 100px;
-      height: 1px;
-      background: linear-gradient(to right, rgba(255,255,255,0), rgba(255,255,255,1) 50%, rgba(255,255,255,0));
-      opacity: 0;
-      transform-origin: right;
-      animation: shooting-star 6s linear infinite;
-    }
-
-    @keyframes shooting-star {
-      0% {
-        opacity: 0;
-        transform: translateX(0) translateY(0) rotate(0deg);
+  <head>
+    <meta charset="UTF-8" />
+    <title>Exoplanet Discoveries Timeline</title>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+    <script src="https://cdn.plot.ly/plotly-2.24.1.min.js"></script>
+    <style>
+      /* ===== ESTILOS GENERALES ===== */
+      body {
+        background-color: #000;
+        color: #fff;
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 20px;
       }
-      1% {
+
+      /* ===== FONDO ESPACIAL ===== */
+      /* ===== FONDO ESPACIAL MEJORADO ===== */
+      #space-background {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: radial-gradient(
+          ellipse at center,
+          #0a1a3f 0%,
+          #000000 100%
+        );
+        z-index: -10;
+        overflow: hidden;
+      }
+
+      .nebula {
+        position: absolute;
+        border-radius: 50%;
+        filter: blur(60px);
+        opacity: 0.3;
+        background: radial-gradient(
+          circle at center,
+          rgba(255, 100, 100, 0.3) 0%,
+          rgba(0, 0, 0, 0) 70%
+        );
+        animation: pulse 15s infinite alternate ease-in-out;
+      }
+
+      .nebula:nth-child(2n) {
+        background: radial-gradient(
+          circle at center,
+          rgba(100, 100, 255, 0.3) 0%,
+          rgba(0, 0, 0, 0) 70%
+        );
+        animation-delay: 5s;
+      }
+
+      .nebula:nth-child(3n) {
+        background: radial-gradient(
+          circle at center,
+          rgba(100, 255, 100, 0.2) 0%,
+          rgba(0, 0, 0, 0) 70%
+        );
+        animation-delay: 7s;
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 0.2;
+          transform: scale(1);
+        }
+        50% {
+          opacity: 0.4;
+          transform: scale(1.1);
+        }
+      }
+
+      .star {
+        position: absolute;
+        background-color: #fff;
+        border-radius: 50%;
+        animation: twinkle 4s infinite ease-in-out;
+      }
+
+      .star-large {
+        width: 2px !important;
+        height: 2px !important;
+        box-shadow: 0 0 8px 2px rgba(255, 255, 255, 0.8);
+      }
+
+      @keyframes twinkle {
+        0%,
+        100% {
+          opacity: 0.3;
+          box-shadow: 0 0 5px 1px rgba(255, 255, 255, 0.3);
+        }
+        50% {
+          opacity: 1;
+          box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.8);
+        }
+      }
+
+      .shooting-star {
+        position: absolute;
+        width: 100px;
+        height: 1px;
+        background: linear-gradient(
+          to right,
+          rgba(255, 255, 255, 0),
+          rgba(255, 255, 255, 1) 50%,
+          rgba(255, 255, 255, 0)
+        );
+        opacity: 0;
+        transform-origin: right;
+        animation: shooting-star 6s linear infinite;
+      }
+
+      @keyframes shooting-star {
+        0% {
+          opacity: 0;
+          transform: translateX(0) translateY(0) rotate(0deg);
+        }
+        1% {
+          opacity: 1;
+        }
+        5% {
+          opacity: 0;
+          transform: translateX(-500px) translateY(300px) rotate(45deg);
+        }
+        100% {
+          opacity: 0;
+          transform: translateX(-500px) translateY(300px) rotate(45deg);
+        }
+      }
+
+      /* ===== GRÁFICA TIMELINE ===== */
+      #timeline {
+        width: 100%;
+        height: 600px;
+        margin: 0 auto;
+        border: 2px solid #333;
+        border-radius: 10px;
+        box-shadow: 0 0 25px rgba(100, 150, 255, 0.3);
+        position: relative;
+        overflow: hidden;
+      }
+
+      #timeline .scatterlayer .trace .points path {
+        transition: transform 0.3s ease-out, opacity 0.2s ease;
+        cursor: pointer;
+      }
+
+      #timeline .scatterlayer .trace .points path:hover {
+        transform: scale(1.3);
+      }
+
+      @keyframes fadeInScale {
+        0% {
+          opacity: 0;
+          transform: scale(0.2);
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1);
+        }
+      }
+
+      /* ===== BOTONES DE NAVEGACIÓN ===== */
+      .button-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+        gap: 30px;
+      }
+
+      .arrow-button {
+        background-color: rgba(68, 68, 68, 0.7);
+        color: #fff;
+        border: 1px solid #777;
+        border-radius: 50%;
+        width: 60px;
+        height: 60px;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5),
+          0 0 15px rgba(100, 150, 255, 0.3);
+        transition: all 0.3s ease;
+      }
+
+      .arrow-button:hover {
+        background-color: rgba(100, 150, 255, 0.4);
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(100, 150, 255, 0.7);
+      }
+
+      .arrow-button:active {
+        transform: scale(0.95);
+      }
+
+      /* ===== TARJETA DEL PLANETA ===== */
+
+      .timeline-container {
+        position: relative;
+      }
+
+      #planet-card {
+        position: absolute;
+        /* These positioning changes will make it appear in the middle of the timeline */
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        width: 350px;
+        height: auto;
+        max-height: 90vh;
+        background: linear-gradient(
+          145deg,
+          rgba(20, 40, 80, 0.95) 0%,
+          rgba(10, 20, 40, 0.98) 100%
+        );
+        border-radius: 15px;
+        border: 2px solid rgba(100, 150, 255, 0.6);
+        box-shadow: 0 0 40px rgba(100, 150, 255, 0.5),
+          inset 0 0 30px rgba(100, 150, 255, 0.2);
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        z-index: 1000;
+        opacity: 0;
+        transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+          opacity 0.5s ease-in-out;
+        overflow-y: auto;
+        pointer-events: none;
+      }
+
+      #planet-card.visible {
+        transform: translate(-50%, -50%) scale(1);
         opacity: 1;
+        pointer-events: auto;
       }
-      5% {
+
+      .planet-name {
+        font-size: 1.8em;
+        color: #ffd700;
+        margin-bottom: 10px;
+        text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+      }
+
+      .planet-image-container {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: 10px 0;
+        border: 3px solid rgba(100, 150, 255, 0.6);
+        box-shadow: 0 0 20px rgba(100, 150, 255, 0.6);
+        background: radial-gradient(
+            circle at 65% 15%,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 3%
+          ),
+          radial-gradient(
+            circle at 30% 40%,
+            rgba(255, 255, 255, 0.2) 1px,
+            transparent 4%
+          ),
+          radial-gradient(
+            circle at 70% 90%,
+            rgba(255, 255, 255, 0.1) 1px,
+            transparent 2%
+          );
+        position: relative;
+      }
+
+      .card-shine {
+        position: absolute;
+        top: 0;
+        left: -100%;
+        width: 80%;
+        height: 100%;
+        background: linear-gradient(
+          90deg,
+          rgba(255, 255, 255, 0) 0%,
+          rgba(255, 255, 255, 0.1) 25%,
+          rgba(255, 255, 255, 0.2) 50%,
+          rgba(255, 255, 255, 0.1) 75%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        transform: skewX(-15deg);
+        animation: card-shine-animation 3s ease-in-out infinite;
+      }
+
+      @keyframes card-shine-animation {
+        0% {
+          left: -100%;
+        }
+        20% {
+          left: 100%;
+        }
+        100% {
+          left: 100%;
+        }
+      }
+
+      /* ===== PESTAÑAS DE LA TARJETA ===== */
+      .card-tabs {
+        display: flex;
+        justify-content: space-around;
+        margin: 10px 0;
+        width: 100%;
+      }
+
+      .tab-button {
+        background-color: rgba(30, 60, 100, 0.6);
+        color: #adf;
+        border: 1px solid rgba(100, 150, 255, 0.4);
+        border-radius: 5px;
+        padding: 8px 12px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        flex-grow: 1;
+        margin: 0 5px;
+        font-size: 0.9em;
+      }
+
+      .tab-button:hover {
+        background-color: rgba(40, 80, 120, 0.7);
+      }
+
+      .tab-button.active {
+        background-color: rgba(60, 100, 180, 0.7);
+        border-color: rgba(100, 150, 255, 0.8);
+        box-shadow: 0 0 10px rgba(100, 150, 255, 0.4);
+      }
+
+      .tab-content {
+        width: 100%;
+        transition: all 0.3s ease;
+      }
+
+      .tab-content.hidden {
+        display: none;
+      }
+
+      /* ===== ESTADÍSTICAS DEL PLANETA ===== */
+      .planet-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        width: 100%;
+      }
+
+      .stat {
+        background-color: rgba(30, 60, 100, 0.6);
+        border-radius: 8px;
+        padding: 10px 5px;
+        border: 1px solid rgba(100, 150, 255, 0.4);
+        transition: all 0.3s ease;
+      }
+
+      .stat:hover {
+        background-color: rgba(40, 80, 120, 0.7);
+        transform: translateY(-3px);
+      }
+
+      .stat-name {
+        color: #adf;
+        font-size: 0.85em;
+        margin-bottom: 5px;
+        display: block;
+      }
+
+      .stat-value {
+        font-size: 1.1em;
+        font-weight: bold;
+      }
+
+      .planet-type {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        background-color: rgba(255, 215, 0, 0.8);
+        color: #000;
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 0.7em;
+        font-weight: bold;
+      }
+
+      /* ===== HEADER Y OVERLAY ===== */
+      #header {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 1.2em;
+        color: #adf;
+        text-shadow: 0 0 10px rgba(100, 150, 255, 0.8);
+      }
+
+      .close-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 30px;
+        height: 30px;
+        background-color: rgba(255, 255, 255, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        font-size: 16px;
+        color: white;
+      }
+
+      .close-button:hover {
+        background-color: rgba(255, 255, 255, 0.3);
+        transform: scale(1.1);
+      }
+
+      #overlay {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        z-index: 900;
         opacity: 0;
-        transform: translateX(-500px) translateY(300px) rotate(45deg);
+        pointer-events: none;
+        transition: opacity 0.3s ease;
       }
-      100% {
+
+      #overlay.active {
+        opacity: 1;
+        pointer-events: auto;
+      }
+
+      /* ===== CONTENEDOR PRINCIPAL ===== */
+      .container {
+        display: flex;
+        position: relative;
+      }
+
+      .main-content {
+        flex-grow: 1;
+        position: relative;
+      }
+
+      #timeline {
+        position: relative;
+        height: 600px;
+      }
+
+      /* ===== SCATTER PLOT STYLES ===== */
+      #scatter-container {
+        margin-top: 20px;
+        width: 100%;
+      }
+
+      #scatter-plot {
+        width: 100%;
+        height: 430px;
+        border: 2px solid #333;
+        border-radius: 10px;
+        box-shadow: 0 0 25px rgba(100, 150, 255, 0.3);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .section-title {
+        color: #adf;
+        text-align: center;
+        font-size: 1.4em;
+        margin-bottom: 15px;
+        text-shadow: 0 0 10px rgba(100, 150, 255, 0.5);
+      }
+
+      /* ===== FILTER PANEL STYLES ===== */
+      .filter-panel {
+        background-color: rgba(20, 40, 80, 0.7);
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 20px;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 0 15px rgba(100, 150, 255, 0.2);
+        border: 1px solid rgba(100, 150, 255, 0.3);
+      }
+
+      .filter-group {
+        margin: 10px;
+        flex-grow: 1;
+        min-width: 200px;
+      }
+
+      .filter-group label {
+        display: block;
+        margin-bottom: 5px;
+        color: #adf;
+        font-size: 0.9em;
+      }
+
+      .filter-button {
+        background-color: rgba(60, 100, 180, 0.7);
+        color: #fff;
+        border: 1px solid rgba(100, 150, 255, 0.4);
+        border-radius: 5px;
+        padding: 8px 15px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 10px;
+      }
+
+      .filter-button:hover {
+        background-color: rgba(80, 120, 200, 0.8);
+        box-shadow: 0 0 10px rgba(100, 150, 255, 0.5);
+      }
+
+      .slider,
+      .range {
+        -webkit-appearance: none;
+        width: 100%;
+        height: 6px;
+        border-radius: 3px;
+        background: linear-gradient(to right, #1a3a6a, #4682b4);
+        outline: none;
+        opacity: 0.8;
+        transition: opacity 0.2s;
+        margin: 10px 0;
+      }
+
+      .slider::-webkit-slider-thumb,
+      .range::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #adf;
+        cursor: pointer;
+        box-shadow: 0 0 5px rgba(100, 150, 255, 0.8);
+      }
+
+      .slider::-moz-range-thumb,
+      .range::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: #adf;
+        cursor: pointer;
+        box-shadow: 0 0 5px rgba(100, 150, 255, 0.8);
+      }
+
+      .slider-value {
+        display: inline-block;
+        width: 40px;
+        text-align: center;
+        margin-left: 10px;
+        color: #adf;
+      }
+
+      .range-slider {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .range-value {
+        width: 50px;
+        text-align: center;
+        color: #adf;
+      }
+
+      .slider-container {
+        position: relative;
+        width: 100%;
+        margin: 0 10px;
+      }
+
+      .select-filter {
+        width: 100%;
+        padding: 8px;
+        border-radius: 5px;
+        background-color: rgba(30, 60, 100, 0.6);
+        color: #fff;
+        border: 1px solid rgba(100, 150, 255, 0.4);
+        outline: none;
+      }
+
+      .select-filter option {
+        background-color: #0a1a3f;
+      }
+
+      /* ===== BARRA DE DESPLAZAMIENTO ESPACIAL ===== */
+      /* Estilo para navegadores basados en Webkit (Chrome, Safari, Edge) */
+      ::-webkit-scrollbar {
+        width: 12px;
+        height: 12px;
+        background: rgba(0, 0, 0, 0.7);
+      }
+
+      ::-webkit-scrollbar-track {
+        background: linear-gradient(to right, #0a0e23, #000000);
+        border-radius: 10px;
+        box-shadow: inset 0 0 5px rgba(100, 150, 255, 0.2);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: linear-gradient(
+          to bottom,
+          rgba(51, 153, 255, 0.7),
+          rgba(70, 100, 200, 0.7)
+        );
+        border-radius: 10px;
+        border: 2px solid rgba(20, 40, 80, 0.5);
+        box-shadow: 0 0 10px rgba(100, 200, 255, 0.7);
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: linear-gradient(
+          to bottom,
+          rgba(80, 180, 255, 0.8),
+          rgba(100, 130, 230, 0.8)
+        );
+        box-shadow: 0 0 15px rgba(120, 220, 255, 0.9);
+      }
+
+      ::-webkit-scrollbar-corner {
+        background: #0a0e23;
+      }
+
+      #splash-screen {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        z-index: 1100;
+        background-color: rgba(0, 0, 0, 0.95);
+        transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
+      }
+
+      #splash-screen.hidden {
         opacity: 0;
-        transform: translateX(-500px) translateY(300px) rotate(45deg);
+        transform: translateY(-100%);
+        pointer-events: none;
       }
-    }
-
-    /* ===== GRÁFICA TIMELINE ===== */
-    #timeline {
-      width: 100%;
-      height: 600px;
-      margin: 0 auto;
-      border: 2px solid #333;
-      border-radius: 10px;
-      box-shadow: 0 0 25px rgba(100, 150, 255, 0.3);
-      position: relative;
-      overflow: hidden;
-    }
-
-    #timeline .scatterlayer .trace .points path {
-      transition: transform 0.3s ease-out, opacity 0.2s ease;
-      cursor: pointer;
-    }
-
-    #timeline .scatterlayer .trace .points path:hover {
-      transform: scale(1.3);
-    }
-
-    @keyframes fadeInScale {
-      0% { opacity: 0; transform: scale(0.2); }
-      100% { opacity: 1; transform: scale(1); }
-    }
-
-    /* ===== BOTONES DE NAVEGACIÓN ===== */
-    .button-container {
-      display: flex;
-      justify-content: center;
-      margin-top: 20px;
-      gap: 30px;
-    }
-
-    .arrow-button {
-      background-color: rgba(68, 68, 68, 0.7);
-      color: #fff;
-      border: 1px solid #777;
-      border-radius: 50%;
-      width: 60px;
-      height: 60px;
-      font-size: 28px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(100, 150, 255, 0.3);
-      transition: all 0.3s ease;
-    }
-
-    .arrow-button:hover {
-      background-color: rgba(100, 150, 255, 0.4);
-      transform: scale(1.1);
-      box-shadow: 0 0 20px rgba(100, 150, 255, 0.7);
-    }
-
-    .arrow-button:active {
-      transform: scale(0.95);
-    }
-
-    /* ===== TARJETA DEL PLANETA ===== */
-
-    .timeline-container {
-      position: relative;
-    }
-
-    #planet-card {
-      position: absolute;
-      /* These positioning changes will make it appear in the middle of the timeline */
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      width: 350px;
-      height: auto;
-      max-height: 90vh;
-      background: linear-gradient(145deg, rgba(20, 40, 80, 0.95) 0%, rgba(10, 20, 40, 0.98) 100%);
-      border-radius: 15px;
-      border: 2px solid rgba(100, 150, 255, 0.6);
-      box-shadow: 0 0 40px rgba(100, 150, 255, 0.5), inset 0 0 30px rgba(100, 150, 255, 0.2);
-      padding: 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      text-align: center;
-      z-index: 1000;
-      opacity: 0;
-      transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-                  opacity 0.5s ease-in-out;
-      overflow-y: auto;
-      pointer-events: none;
-    }
-
-    #planet-card.visible {
-      transform: translate(-50%, -50%) scale(1);
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    .planet-name {
-      font-size: 1.8em;
-      color: #FFD700;
-      margin-bottom: 10px;
-      text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
-    }
-
-    .planet-image-container {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin: 10px 0;
-      border: 3px solid rgba(100, 150, 255, 0.6);
-      box-shadow: 0 0 20px rgba(100, 150, 255, 0.6);
-      background: radial-gradient(circle at 65% 15%, rgba(255, 255, 255, 0.1) 1px, transparent 3%),
-                  radial-gradient(circle at 30% 40%, rgba(255, 255, 255, 0.2) 1px, transparent 4%),
-                  radial-gradient(circle at 70% 90%, rgba(255, 255, 255, 0.1) 1px, transparent 2%);
-      position: relative;
-    }
-
-    .card-shine {
-      position: absolute;
-      top: 0;
-      left: -100%;
-      width: 80%;
-      height: 100%;
-      background: linear-gradient(
-        90deg,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 0.1) 25%,
-        rgba(255, 255, 255, 0.2) 50%,
-        rgba(255, 255, 255, 0.1) 75%,
-        rgba(255, 255, 255, 0) 100%
-      );
-      transform: skewX(-15deg);
-      animation: card-shine-animation 3s ease-in-out infinite;
-    }
-
-    @keyframes card-shine-animation {
-      0% { left: -100%; }
-      20% { left: 100%; }
-      100% { left: 100%; }
-    }
-
-    /* ===== PESTAÑAS DE LA TARJETA ===== */
-    .card-tabs {
-      display: flex;
-      justify-content: space-around;
-      margin: 10px 0;
-      width: 100%;
-    }
-
-    .tab-button {
-      background-color: rgba(30, 60, 100, 0.6);
-      color: #adf;
-      border: 1px solid rgba(100, 150, 255, 0.4);
-      border-radius: 5px;
-      padding: 8px 12px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      flex-grow: 1;
-      margin: 0 5px;
-      font-size: 0.9em;
-    }
-
-    .tab-button:hover {
-      background-color: rgba(40, 80, 120, 0.7);
-    }
-
-    .tab-button.active {
-      background-color: rgba(60, 100, 180, 0.7);
-      border-color: rgba(100, 150, 255, 0.8);
-      box-shadow: 0 0 10px rgba(100, 150, 255, 0.4);
-    }
-
-    .tab-content {
-      width: 100%;
-      transition: all 0.3s ease;
-    }
-
-    .tab-content.hidden {
-      display: none;
-    }
-
-    /* ===== ESTADÍSTICAS DEL PLANETA ===== */
-    .planet-stats {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 15px;
-      width: 100%;
-    }
-
-    .stat {
-      background-color: rgba(30, 60, 100, 0.6);
-      border-radius: 8px;
-      padding: 10px 5px;
-      border: 1px solid rgba(100, 150, 255, 0.4);
-      transition: all 0.3s ease;
-    }
-
-    .stat:hover {
-      background-color: rgba(40, 80, 120, 0.7);
-      transform: translateY(-3px);
-    }
-
-    .stat-name {
-      color: #adf;
-      font-size: 0.85em;
-      margin-bottom: 5px;
-      display: block;
-    }
-
-    .stat-value {
-      font-size: 1.1em;
-      font-weight: bold;
-    }
-
-    .planet-type {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      background-color: rgba(255, 215, 0, 0.8);
-      color: #000;
-      padding: 3px 8px;
-      border-radius: 10px;
-      font-size: 0.7em;
-      font-weight: bold;
-    }
-
-    /* ===== HEADER Y OVERLAY ===== */
-    #header {
-      text-align: center;
-      margin-bottom: 20px;
-      font-size: 1.2em;
-      color: #adf;
-      text-shadow: 0 0 10px rgba(100, 150, 255, 0.8);
-    }
-
-    .close-button {
-      position: absolute;
-      top: 10px;
-      right: 10px;
-      width: 30px;
-      height: 30px;
-      background-color: rgba(255, 255, 255, 0.1);
-      border: 1px solid rgba(255, 255, 255, 0.3);
-      border-radius: 50%;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      font-size: 16px;
-      color: white;
-    }
-
-    .close-button:hover {
-      background-color: rgba(255, 255, 255, 0.3);
-      transform: scale(1.1);
-    }
-
-    #overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background-color: rgba(0, 0, 0, 0.5);
-      z-index: 900;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.3s ease;
-    }
-
-    #overlay.active {
-      opacity: 1;
-      pointer-events: auto;
-    }
-
-    /* ===== CONTENEDOR PRINCIPAL ===== */
-    .container {
-      display: flex;
-      position: relative;
-    }
-
-    .main-content {
-      flex-grow: 1;
-      position: relative;
-    }
-
-    #timeline {
-      position: relative;
-      height: 600px;
-    }
-
-    /* ===== SCATTER PLOT STYLES ===== */
-    #scatter-container {
-      margin-top: 40px;
-      width: 100%;
-    }
-
-    #scatter-plot {
-      width: 100%;
-      height: 500px;
-      border: 2px solid #333;
-      border-radius: 10px;
-      box-shadow: 0 0 25px rgba(100, 150, 255, 0.3);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .section-title {
-      color: #adf;
-      text-align: center;
-      font-size: 1.4em;
-      margin-bottom: 15px;
-      text-shadow: 0 0 10px rgba(100, 150, 255, 0.5);
-    }
-
-    /* ===== FILTER PANEL STYLES ===== */
-    .filter-panel {
-      background-color: rgba(20, 40, 80, 0.7);
-      border-radius: 10px;
-      padding: 15px;
-      margin-bottom: 20px;
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      box-shadow: 0 0 15px rgba(100, 150, 255, 0.2);
-      border: 1px solid rgba(100, 150, 255, 0.3);
-    }
-
-    .filter-group {
-      margin: 10px;
-      flex-grow: 1;
-      min-width: 200px;
-    }
-
-    .filter-group label {
-      display: block;
-      margin-bottom: 5px;
-      color: #adf;
-      font-size: 0.9em;
-    }
-
-    .filter-button {
-      background-color: rgba(60, 100, 180, 0.7);
-      color: #fff;
-      border: 1px solid rgba(100, 150, 255, 0.4);
-      border-radius: 5px;
-      padding: 8px 15px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      margin: 10px;
-    }
-
-    .filter-button:hover {
-      background-color: rgba(80, 120, 200, 0.8);
-      box-shadow: 0 0 10px rgba(100, 150, 255, 0.5);
-    }
-
-    .slider, .range {
-      -webkit-appearance: none;
-      width: 100%;
-      height: 6px;
-      border-radius: 3px;
-      background: linear-gradient(to right, #1a3a6a, #4682b4);
-      outline: none;
-      opacity: 0.8;
-      transition: opacity 0.2s;
-      margin: 10px 0;
-    }
-
-    .slider::-webkit-slider-thumb, .range::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #adf;
-      cursor: pointer;
-      box-shadow: 0 0 5px rgba(100, 150, 255, 0.8);
-    }
-
-    .slider::-moz-range-thumb, .range::-moz-range-thumb {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: #adf;
-      cursor: pointer;
-      box-shadow: 0 0 5px rgba(100, 150, 255, 0.8);
-    }
-
-    .slider-value {
-      display: inline-block;
-      width: 40px;
-      text-align: center;
-      margin-left: 10px;
-      color: #adf;
-    }
-
-    .range-slider {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .range-value {
-      width: 50px;
-      text-align: center;
-      color: #adf;
-    }
-
-    .slider-container {
-      position: relative;
-      width: 100%;
-      margin: 0 10px;
-    }
-
-    .select-filter {
-      width: 100%;
-      padding: 8px;
-      border-radius: 5px;
-      background-color: rgba(30, 60, 100, 0.6);
-      color: #fff;
-      border: 1px solid rgba(100, 150, 255, 0.4);
-      outline: none;
-    }
-
-    .select-filter option {
-      background-color: #0a1a3f;
-    }
-
-    /* ===== BARRA DE DESPLAZAMIENTO ESPACIAL ===== */
-    /* Estilo para navegadores basados en Webkit (Chrome, Safari, Edge) */
-    ::-webkit-scrollbar {
-      width: 12px;
-      height: 12px;
-      background: rgba(0, 0, 0, 0.7);
-    }
-
-    ::-webkit-scrollbar-track {
-      background: linear-gradient(to right, #0a0e23, #000000);
-      border-radius: 10px;
-      box-shadow: inset 0 0 5px rgba(100, 150, 255, 0.2);
-    }
-
-    ::-webkit-scrollbar-thumb {
-      background: linear-gradient(to bottom, rgba(51, 153, 255, 0.7), rgba(70, 100, 200, 0.7));
-      border-radius: 10px;
-      border: 2px solid rgba(20, 40, 80, 0.5);
-      box-shadow: 0 0 10px rgba(100, 200, 255, 0.7);
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-      background: linear-gradient(to bottom, rgba(80, 180, 255, 0.8), rgba(100, 130, 230, 0.8));
-      box-shadow: 0 0 15px rgba(120, 220, 255, 0.9);
-    }
-
-    ::-webkit-scrollbar-corner {
-      background: #0a0e23;
-    }
-
-    #splash-screen {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 1100;
-      background-color: rgba(0,0,0,0.95);
-      transition: opacity 1.5s ease-in-out, transform 1.5s ease-in-out;
-    }
-    
-    #splash-screen.hidden {
-      opacity: 0;
-      transform: translateY(-100%);
-      pointer-events: none;
-    }
-    
-    #splash-title {
-      font-size: 3.5em;
-      margin-bottom: 20px;
-      color: #FFD700;
-      text-align: center;
-      text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
-      animation: glow 2s infinite alternate;
-    }
-    
-    #splash-subtitle {
-      font-size: 1.5em;
-      color: #adf;
-      margin-bottom: 50px;
-      text-align: center;
-      max-width: 80%;
-    }
-    
-    #start-button {
-      padding: 12px 40px;
-      font-size: 1.6em;
-      background: linear-gradient(145deg, rgba(30, 60, 100, 0.8), rgba(10, 20, 40, 0.9));
-      color: #adf;
-      border: 2px solid rgba(100, 150, 255, 0.6);
-      border-radius: 50px;
-      cursor: pointer;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 20px rgba(100, 150, 255, 0.5), inset 0 0 10px rgba(100, 150, 255, 0.2);
-      text-shadow: 0 0 10px rgba(100, 150, 255, 0.8);
-    }
-    
-    #start-button:hover {
-      background: linear-gradient(145deg, rgba(40, 80, 130, 0.8), rgba(20, 40, 80, 0.9));
-      transform: translateY(-5px);
-      box-shadow: 0 0 30px rgba(100, 150, 255, 0.7), inset 0 0 15px rgba(100, 150, 255, 0.3);
-    }
-    
-    #start-button:active {
-      transform: translateY(-2px);
-    }
-    
-    .content-container {
-      opacity: 0;
-      transform: translateY(50px);
-      transition: opacity 1s ease-in-out, transform 1s ease-in-out;
-      width: 100%;
-    }
-    
-    .content-container.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-    
-    @keyframes glow {
-      from { text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
-      to { text-shadow: 0 0 20px rgba(255, 215, 0, 0.9), 0 0 30px rgba(255, 215, 0, 0.7); }
-    }
-
-    .planet-image-container {
-      width: 180px;
-      height: 180px;
-      border-radius: 50%;
-      overflow: hidden;
-      margin: 10px 0;
-      border: 3px solid rgba(100, 150, 255, 0.6);
-      box-shadow: 0 0 20px rgba(100, 150, 255, 0.6);
-      position: relative;
-      background: transparent;
-    }
-
-    .planet-image-container canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-    }
-
-    .planet-type {
-      position: absolute;
-      top: 5px;
-      right: 5px;
-      z-index: 10;
-      background-color: rgba(255, 215, 0, 0.8);
-      color: #000;
-      padding: 3px 8px;
-      border-radius: 10px;
-      font-size: 0.7em;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <!-- Fondo espacial -->
-  <div id="space-background"></div>
-  <div id="overlay"></div>
-
-  <div id="splash-screen">
-    <h1 id="splash-title">Exoplanet Discoveries Timeline</h1>
-    <p id="splash-subtitle">Explore planets with high Earth Similarity Index (ESI) discovered over the years (full window for a better experience)</p>
-    <button id="start-button">Begin Exploration</button>
-  </div>
-
-  <div class="container">
-    <div class="main-content">
-      <div id="timeline">
-        <div id="planet-card">
-          <div class="close-button">&times;</div>
-          <div class="planet-name">Planet Name</div>
-          <div class="planet-image-container">
-            <div class="planet-type"></div>
-            <canvas id="planet-canvas" width="180" height="180"></canvas>
-            <div class="card-shine"></div>
-          </div>
-          
-          <div class="card-tabs">
-            <button class="tab-button active" data-tab="basic">Basic</button>
-            <button class="tab-button" data-tab="system">System</button>
-            <button class="tab-button" data-tab="orbit">Orbit</button>
-          </div>
-          
-          <div class="tab-content" id="basic-tab">
-            <div class="planet-stats">
-              <div class="stat">
-                <span class="stat-name">Discovery year</span>
-                <span class="stat-value" id="disc-year">2000</span>
-              </div>
-              <div class="stat">
-                <span class="stat-name">ESI</span>
-                <span class="stat-value" id="esi-value">0.00</span>
-              </div>
-              <div class="stat">
-                <span class="stat-name">Radius</span>
-                <span class="stat-value" id="radius-value">0.0 R⊕</span>
-              </div>
-              <div class="stat">
-                <span class="stat-name">Mass</span>
-                <span class="stat-value" id="mass-value">Unknown</span>
-              </div>
-              <div class="stat">
-                <span class="stat-name">Temperature</span>
-                <span class="stat-value" id="temp-value">Unknown</span>
-              </div>
-              <div class="stat">
-                <span class="stat-name">Discovery facility</span>
-                <span class="stat-value" id="facility-value">Unknown</span>
+
+      #splash-title {
+        font-size: 3.5em;
+        margin-bottom: 20px;
+        color: #ffd700;
+        text-align: center;
+        text-shadow: 0 0 20px rgba(255, 215, 0, 0.7);
+        animation: glow 2s infinite alternate;
+      }
+
+      #splash-subtitle {
+        font-size: 1.5em;
+        color: #adf;
+        margin-bottom: 50px;
+        text-align: center;
+        max-width: 80%;
+      }
+
+      #start-button {
+        padding: 12px 40px;
+        font-size: 1.6em;
+        background: linear-gradient(
+          145deg,
+          rgba(30, 60, 100, 0.8),
+          rgba(10, 20, 40, 0.9)
+        );
+        color: #adf;
+        border: 2px solid rgba(100, 150, 255, 0.6);
+        border-radius: 50px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 20px rgba(100, 150, 255, 0.5),
+          inset 0 0 10px rgba(100, 150, 255, 0.2);
+        text-shadow: 0 0 10px rgba(100, 150, 255, 0.8);
+      }
+
+      #start-button:hover {
+        background: linear-gradient(
+          145deg,
+          rgba(40, 80, 130, 0.8),
+          rgba(20, 40, 80, 0.9)
+        );
+        transform: translateY(-5px);
+        box-shadow: 0 0 30px rgba(100, 150, 255, 0.7),
+          inset 0 0 15px rgba(100, 150, 255, 0.3);
+      }
+
+      #start-button:active {
+        transform: translateY(-2px);
+      }
+
+      .content-container {
+        opacity: 0;
+        transform: translateY(50px);
+        transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+        width: 100%;
+      }
+
+      .content-container.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      @keyframes glow {
+        from {
+          text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+        to {
+          text-shadow: 0 0 20px rgba(255, 215, 0, 0.9),
+            0 0 30px rgba(255, 215, 0, 0.7);
+        }
+      }
+
+      .planet-image-container {
+        width: 180px;
+        height: 180px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin: 10px 0;
+        border: 3px solid rgba(100, 150, 255, 0.6);
+        box-shadow: 0 0 20px rgba(100, 150, 255, 0.6);
+        position: relative;
+        background: transparent;
+      }
+
+      .planet-image-container canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+      }
+
+      .planet-type {
+        position: absolute;
+        top: 5px;
+        right: 5px;
+        z-index: 10;
+        background-color: rgba(255, 215, 0, 0.8);
+        color: #000;
+        padding: 3px 8px;
+        border-radius: 10px;
+        font-size: 0.7em;
+        font-weight: bold;
+      }
+
+      /* Replace or add these styles to make filters more compact */
+
+      .filter-panel {
+        background-color: rgba(20, 40, 80, 0.7);
+        border-radius: 10px;
+        padding: 10px; /* Reduced padding */
+        margin-bottom: 15px; /* Reduced margin */
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        box-shadow: 0 0 15px rgba(100, 150, 255, 0.2);
+        border: 1px solid rgba(100, 150, 255, 0.3);
+      }
+
+      .filter-group {
+        margin: 5px; /* Reduced margin */
+        flex-grow: 1;
+        min-width: 180px; /* Smaller minimum width */
+      }
+
+      .filter-group label {
+        display: block;
+        margin-bottom: 3px; /* Reduced margin */
+        color: #adf;
+        font-size: 0.85em; /* Smaller font */
+      }
+
+      .checkbox-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px; /* Reduced gap */
+        max-height: 80px; /* Reduced height */
+        overflow-y: auto;
+        padding: 4px; /* Reduced padding */
+        background-color: rgba(20, 40, 80, 0.4);
+        border-radius: 5px;
+      }
+
+      .method-checkbox {
+        display: flex;
+        align-items: center;
+        background-color: rgba(30, 60, 100, 0.6);
+        border-radius: 5px;
+        padding: 2px 6px; /* Reduced padding */
+        transition: all 0.3s ease;
+      }
+
+      .method-checkbox label {
+        font-size: 0.8em; /* Smaller font */
+        margin-bottom: 0;
+      }
+
+      .filter-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3px; /* Reduced gap */
+      }
+
+      .filter-button {
+        background-color: rgba(60, 100, 180, 0.7);
+        color: #fff;
+        border: 1px solid rgba(100, 150, 255, 0.4);
+        border-radius: 5px;
+        padding: 5px 10px; /* Reduced padding */
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin: 5px; /* Reduced margin */
+        font-size: 0.85em; /* Smaller font */
+      }
+
+      /* Add these to your existing CSS section */
+
+      .discovery-methods-group {
+        flex-grow: 3;
+      }
+
+      .checkbox-container {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+        max-height: 120px;
+        overflow-y: auto;
+        padding: 5px;
+        background-color: rgba(20, 40, 80, 0.4);
+        border-radius: 5px;
+      }
+
+      .method-checkbox {
+        display: flex;
+        align-items: center;
+        background-color: rgba(30, 60, 100, 0.6);
+        border-radius: 5px;
+        padding: 4px 8px;
+        transition: all 0.3s ease;
+      }
+
+      .method-checkbox:hover {
+        background-color: rgba(40, 80, 120, 0.7);
+      }
+
+      .method-checkbox input {
+        margin-right: 5px;
+      }
+
+      .method-checkbox label {
+        color: #adf;
+        font-size: 0.85em;
+        cursor: pointer;
+      }
+
+      .filter-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+      }
+
+      /* Add this to your CSS section */
+      .planet-counter {
+        color: #adf;
+        font-size: 1.1em;
+        text-align: right;
+        margin-bottom: 10px;
+        padding: 0 10px;
+        text-shadow: 0 0 8px rgba(100, 150, 255, 0.5);
+      }
+
+      .planet-counter #planet-count {
+        color: #ffd700;
+        font-weight: bold;
+        font-size: 1.2em;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Fondo espacial -->
+    <div id="space-background"></div>
+    <div id="overlay"></div>
+
+    <div id="splash-screen">
+      <h1 id="splash-title">Exoplanet Discoveries Timeline</h1>
+      <p id="splash-subtitle">
+        Explore planets with high Earth Similarity Index (ESI) discovered over
+        the years (full window for a better experience)
+      </p>
+      <button id="start-button">Begin Exploration</button>
+    </div>
+
+    <div class="container">
+      <div class="main-content">
+        <div id="timeline">
+          <div id="planet-card">
+            <div class="close-button">&times;</div>
+            <div class="planet-name">Planet Name</div>
+            <div class="planet-image-container">
+              <div class="planet-type"></div>
+              <canvas id="planet-canvas" width="180" height="180"></canvas>
+              <div class="card-shine"></div>
+            </div>
+
+            <div class="card-tabs">
+              <button class="tab-button active" data-tab="basic">Basic</button>
+              <button class="tab-button" data-tab="system">System</button>
+              <button class="tab-button" data-tab="orbit">Orbit</button>
+            </div>
+
+            <div class="tab-content" id="basic-tab">
+              <div class="planet-stats">
+                <div class="stat">
+                  <span class="stat-name">Discovery year</span>
+                  <span class="stat-value" id="disc-year">2000</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-name">ESI</span>
+                  <span class="stat-value" id="esi-value">0.00</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-name">Radius</span>
+                  <span class="stat-value" id="radius-value">0.0 R⊕</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-name">Mass</span>
+                  <span class="stat-value" id="mass-value">Unknown</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-name">Temperature</span>
+                  <span class="stat-value" id="temp-value">Unknown</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-name">Discovery facility</span>
+                  <span class="stat-value" id="facility-value">Unknown</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="tab-content hidden" id="system-tab">
-            <div class="planet-stats">
-              <div class="stat">
-                <span class="stat-name">Host star</span>
-                <span class="stat-value" id="hostname-value">Unknown</span>
-              </div>
-              <div class="stat">
-                <span class="stat-name">Number of stars</span>
-                <span class="stat-value" id="sysnum-value">Unknown</span>
-              </div>
-              <div class="stat">
-                <span class="stat-name">Number of planets</span>
-                <span class="stat-value" id="sypnum-value">Unknown</span>
-              </div>
-              <div class="stat">
-                <span class="stat-name">Discovery reference</span>
-                <span class="stat-value" id="refname-value">Unknown</span>
-              </div>
-              <div class="stat">
-                <span class="stat-name">Distance</span>
-                <span class="stat-value" id="distance-value">Unknown</span>
+            <div class="tab-content hidden" id="system-tab">
+              <div class="planet-stats">
+                <div class="stat">
+                  <span class="stat-name">Host star</span>
+                  <span class="stat-value" id="hostname-value">Unknown</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-name">Number of stars</span>
+                  <span class="stat-value" id="sysnum-value">Unknown</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-name">Number of planets</span>
+                  <span class="stat-value" id="sypnum-value">Unknown</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-name">Discovery reference</span>
+                  <span class="stat-value" id="refname-value">Unknown</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-name">Distance</span>
+                  <span class="stat-value" id="distance-value">Unknown</span>
+                </div>
               </div>
             </div>
-          </div>
-          <div class="tab-content hidden" id="orbit-tab">
-            <div class="planet-stats">
-              <div class="stat">
-                <span class="stat-name">Orbital period</span>
-                <span class="stat-value" id="orbper-value">Unknown</span>
-              </div>
-              <div class="stat">
-                <span class="stat-name">Semi-major axis</span>
-                <span class="stat-value" id="orbsmax-value">Unknown</span>
+            <div class="tab-content hidden" id="orbit-tab">
+              <div class="planet-stats">
+                <div class="stat">
+                  <span class="stat-name">Orbital period</span>
+                  <span class="stat-value" id="orbper-value">Unknown</span>
+                </div>
+                <div class="stat">
+                  <span class="stat-name">Semi-major axis</span>
+                  <span class="stat-value" id="orbsmax-value">Unknown</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-      <div class="button-container">
-        <button id="prev" class="arrow-button">&larr;</button>
-        <button id="next" class="arrow-button">&rarr;</button>
-      </div>
+        <div class="button-container">
+          <button id="prev" class="arrow-button">&larr;</button>
+          <button id="next" class="arrow-button">&rarr;</button>
+        </div>
 
-      <!-- Scatter Plot Container -->
-      <div class="content-container visible" id="scatter-container">
-        <h3 class="section-title">Orbital Distance vs Planet Size</h3>
-        
-        <!-- Filtros para el scatter plot -->
-        <div class="filter-panel">
-          <div class="filter-group">
-            <label for="year-range">Discovery Year Range:</label>
-            <div class="range-slider">
-              <span class="range-value" id="min-year-value">1990</span>
-              <div class="slider-container">
-                <input type="range" id="min-year" min="1990" max="2025" value="1990" class="range">
-                <input type="range" id="max-year" min="1990" max="2025" value="2025" class="range">
+        <!-- Scatter Plot Container -->
+        <div class="content-container visible" id="scatter-container">
+          <!-- Replace the filter panel section with this: -->
+          <div class="filter-panel">
+            <div class="filter-group">
+              <label for="year-range">Discovery Year Range:</label>
+              <div class="range-slider">
+                <span class="range-value" id="min-year-value">1990</span>
+                <div class="slider-container">
+                  <input
+                    type="range"
+                    id="min-year"
+                    min="1990"
+                    max="2025"
+                    value="1990"
+                    class="range"
+                  />
+                  <input
+                    type="range"
+                    id="max-year"
+                    min="1990"
+                    max="2025"
+                    value="2025"
+                    class="range"
+                  />
+                </div>
+                <span class="range-value" id="max-year-value">2025</span>
               </div>
-              <span class="range-value" id="max-year-value">2025</span>
+            </div>
+
+            <div class="filter-group discovery-methods-group">
+              <label>Discovery Methods:</label>
+              <div id="discovery-methods-container" class="checkbox-container">
+                <!-- Checkboxes will be added here dynamically -->
+              </div>
+            </div>
+
+            <div class="filter-buttons">
+              <button id="apply-filters" class="filter-button">
+                Apply Filters
+              </button>
+              <button id="reset-filters" class="filter-button">Reset</button>
+              <button id="select-all-methods" class="filter-button">
+                Select All
+              </button>
+              <button id="deselect-all-methods" class="filter-button">
+                Deselect All
+              </button>
             </div>
           </div>
-          
-          <div class="filter-group">
-            <label for="esi-min">Minimum ESI:</label>
-            <input type="range" id="esi-min" min="0" max="1" step="0.01" value="0" class="slider">
-            <span class="slider-value" id="esi-value">0</span>
+
+          <div class="planet-counter">
+            Exoplanets found: <span id="planet-count">0</span>
           </div>
-          
-          <div class="filter-group">
-            <label for="discovery-method">Discovery Method:</label>
-            <select id="discovery-method" class="select-filter">
-              <option value="all">All Methods</option>
-            </select>
-          </div>
-          
-          <button id="apply-filters" class="filter-button">Apply Filters</button>
-          <button id="reset-filters" class="filter-button">Reset</button>
+          <div id="scatter-plot"></div>
         </div>
-        
-        <div id="scatter-plot"></div>
       </div>
     </div>
-  </div>
 
-<script>
-  /**
- * VARIABLES GLOBALES
- */
-// Variable para controlar el temporizador de la tarjeta del planeta
-let planetCardTimer = null;
+    <script>
+      /**
+       * VARIABLES GLOBALES
+       */
+      // Variable para controlar el temporizador de la tarjeta del planeta
+      let planetCardTimer = null
 
-// Variables para datos de planetas
-let allPlanetsData = []; // Datos completos sin filtrar
-let data = []; // Datos cargados desde timeline.json
-let filteredData = []; // Datos filtrados (un planeta por año con el mayor ESI)
-let currentYearIndex = 0; // Índice actual del año mostrado
-let previousYearIndex = 0; // Para rastrear la dirección de navegación
-let yearToIndexMap = {}; // Mapeo de años a índices
+      // Variables para datos de planetas
+      let allPlanetsData = [] // Datos completos sin filtrar
+      let data = [] // Datos cargados desde timeline.json
+      let filteredData = [] // Datos filtrados (un planeta por año con el mayor ESI)
+      let currentYearIndex = 0 // Índice actual del año mostrado
+      let previousYearIndex = 0 // Para rastrear la dirección de navegación
+      let yearToIndexMap = {} // Mapeo de años a índices
 
-// Arrays para almacenar los datos procesados de los planetas
-const planetsData = [];
+      // Arrays para almacenar los datos procesados de los planetas
+      const planetsData = []
 
-// Constantes para visualización
-const PLANET_COLOR = 'rgb(51, 255, 246)'; // Color fijo para los planetas
-const HIGHLIGHT_COLOR = 'rgb(253, 243, 39)'; // Color destacado para el planeta actual
-const SIZE_MULTIPLIER = 2.5; // Factor de aumento para el tamaño del planeta destacado
+      // Constantes para visualización
+      const PLANET_COLOR = 'rgb(51, 255, 246)' // Color fijo para los planetas
+      const HIGHLIGHT_COLOR = 'rgb(253, 243, 39)' // Color destacado para el planeta actual
+      const SIZE_MULTIPLIER = 2.5 // Factor de aumento para el tamaño del planeta destacado
 
-/**
- * INICIALIZACIÓN DE INTERFAZ
- */
-// Crear estrellas para el fondo espacial
-function createStars() {
-  const background = document.getElementById('space-background');
-  const starCount = 200; // Número de estrellas
+      /**
+       * INICIALIZACIÓN DE INTERFAZ
+       */
+      // Crear estrellas para el fondo espacial
+      function createStars() {
+        const background = document.getElementById('space-background')
+        const starCount = 200 // Número de estrellas
 
-  for (let i = 0; i < starCount; i++) {
-    const star = document.createElement('div');
-    star.className = 'star';
+        for (let i = 0; i < starCount; i++) {
+          const star = document.createElement('div')
+          star.className = 'star'
 
-    // Tamaño aleatorio (mayormente pequeñas)
-    const size = Math.random() * 3;
-    star.style.width = size + 'px';
-    star.style.height = size + 'px';
+          // Tamaño aleatorio (mayormente pequeñas)
+          const size = Math.random() * 3
+          star.style.width = size + 'px'
+          star.style.height = size + 'px'
 
-    // Posición aleatoria
-    star.style.left = Math.random() * 100 + '%';
-    star.style.top = Math.random() * 100 + '%';
+          // Posición aleatoria
+          star.style.left = Math.random() * 100 + '%'
+          star.style.top = Math.random() * 100 + '%'
 
-    // Retraso aleatorio en la animación de parpadeo
-    star.style.animationDelay = Math.random() * 4 + 's';
+          // Retraso aleatorio en la animación de parpadeo
+          star.style.animationDelay = Math.random() * 4 + 's'
 
-    background.appendChild(star);
-  }
-}
-
-// Ejecutar la creación de estrellas al cargar
-createStars();
-
-/**
- * CONFIGURACIÓN DE LA GRÁFICA
- */
-// Inicializar la gráfica con ejes estáticos
-const layout = {
-  title: {
-    text: '',
-    font: {
-      color: '#FFD700',
-      size: 24
-    }
-  },
-  paper_bgcolor: 'rgba(0,0,0,0)',
-  plot_bgcolor: 'rgba(0,0,0,0)',
-  xaxis: {
-    title: {
-      text: 'Year of Discovery',
-      font: {
-        color: '#adf',
-        size: 14
-      }
-    },
-    tickfont: {
-      color: '#adf'
-    },
-    showgrid: false,
-    tickmode: 'array',
-    tickvals: [2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024],
-    range: [2010, 2025]
-  },
-  yaxis: {
-    title: {
-      text: 'Earth Similarity Index (ESI)',
-      font: {
-        color: '#adf',
-        size: 14
-      }
-    },
-    tickfont: {
-      color: '#adf'
-    },
-    showgrid: false,
-    range: [0, 1]
-  },
-  hovermode: 'closest',
-  dragmode: false
-};
-
-// Configuración para Plotly
-const config = {
-  displayModeBar: false,
-  responsive: true,
-  scrollZoom: false,
-  showTips: false,
-  modeBarButtonsToRemove: ['select2d', 'lasso2d']
-};
-
-// Crear la gráfica inicial con ejes estáticos
-Plotly.newPlot('timeline', [{
-  x: [],
-  y: [],
-  mode: 'markers',
-  type: 'scatter',
-  marker: {
-    size: [],
-    color: PLANET_COLOR,
-    showscale: false,
-    line: {
-      color: 'rgba(100, 150, 255, 0.5)',
-      width: 1
-    },
-    opacity: 0.8
-  },
-  text: [],
-  hoverinfo: 'none'
-}], layout, config);
-
-/**
- * CARGA Y PROCESAMIENTO DE DATOS
- */
-// Cargar los datos desde timeline.json
-fetch('timeline.json')
-  .then(response => {
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    return response.json();
-  })
-  .then(jsonData => {
-    data = jsonData;
-    allPlanetsData = jsonData; // Guardar todos los datos
-
-    // Filtrar los datos para obtener el planeta con el mayor ESI por año
-    const planetsByYear = {};
-    data.forEach(planet => {
-      if (!planet.disc_year) return; // Ignorar planetas sin año de descubrimiento
-      
-      const year = planet.disc_year;
-      // Asegurar que ESI sea un número válido
-      const esiValue = (typeof planet.ESI === 'number' && !isNaN(planet.ESI)) ? planet.ESI : 0;
-      if (!planetsByYear[year] || esiValue > planetsByYear[year].ESI) {
-        planetsByYear[year] = { ...planet, ESI: esiValue }; // Almacenar el ESI validado
-      }
-    });
-
-    // Convertir el objeto en una lista ordenada por año
-    filteredData = Object.values(planetsByYear).sort((a, b) => a.disc_year - b.disc_year);
-
-    // Crear mapeo de año a índice
-    filteredData.forEach((planet, index) => {
-      yearToIndexMap[planet.disc_year] = index;
-    });
-
-    // Preprocesar los datos de los planetas
-    planetsData.length = 0; // Limpiar datos previos si existen
-    for (let i = 0; i < filteredData.length; i++) {
-      const planet = filteredData[i];
-      planetsData.push({
-        x: planet.disc_year,
-        y: Math.max(0, planet.ESI), // Usar el ESI validado
-        baseSize: (planet.pl_rade || 1) * 10,
-        text: `Planet: ${planet.pl_name}<br>Year: ${planet.disc_year}<br>ESI: ${planet.ESI.toFixed(2)}<br>Radius: ${planet.pl_rade || 'N/A'} Earth radius`
-      });
-    }
-
-    // Inicializar la gráfica con el primer planeta
-    updateTimeline();
-    
-    // Crear el scatter plot
-    createScatterPlot();
-
-    // Agregar evento para detectar clics en los planetas
-    const plotDiv = document.getElementById('timeline');
-    plotDiv.on('plotly_click', function(eventData) {
-      // Si se hizo clic en un punto
-      if (eventData.points && eventData.points.length > 0) {
-        const point = eventData.points[0];
-        const pointIndex = point.pointNumber;
-        
-        // Si estamos en vista normal y hacemos clic en un planeta
-        if (pointIndex >= 0 && pointIndex < filteredData.length && pointIndex <= currentYearIndex) {
-          // Mostrar la tarjeta del planeta
-          console.log('Showing card for planet:', filteredData[pointIndex].pl_name);
-          showPlanetCard(filteredData[pointIndex]);
-          
-          // Cancelar el temporizador para evitar mostrar otra tarjeta automáticamente
-          if (planetCardTimer) {
-            clearTimeout(planetCardTimer);
-            planetCardTimer = null;
-          }
+          background.appendChild(star)
         }
       }
-    });
-  })
-  .catch(error => {
-    console.error('Error loading or processing timeline.json:', error);
-    // Mostrar mensaje de error al usuario
-    const header = document.getElementById('header');
-    const errorMsg = document.createElement('p');
-    errorMsg.style.color = 'red';
-    errorMsg.textContent = 'Error loading planet data. Please check the console for details.';
-    header.appendChild(errorMsg);
-  });
 
-/**
- * ACTUALIZACIÓN DE LA LÍNEA DE TIEMPO
- */
-// Función para actualizar la línea de tiempo general
-function updateTimeline() {
-  // Cancelar cualquier temporizador existente para mostrar la tarjeta
-  if (planetCardTimer) {
-    clearTimeout(planetCardTimer);
-    planetCardTimer = null;
-  }
+      // Ejecutar la creación de estrellas al cargar
+      createStars()
 
-  // Cerrar la tarjeta si está abierta
-  closePlanetCard();
-
-  if (currentYearIndex >= 0 && currentYearIndex < filteredData.length) {
-    const planet = filteredData[currentYearIndex];
-
-    // Determinar dirección de navegación
-    const isForward = currentYearIndex >= previousYearIndex;
-    previousYearIndex = currentYearIndex;
-
-    // Crear arrays para mostrar solo hasta el índice actual
-    const visibleX = [];
-    const visibleY = [];
-    const visibleSizes = [];
-    const visibleColors = [];
-    const visibleTexts = [];
-
-    // Acumular solo hasta el índice actual
-    for (let i = 0; i <= currentYearIndex; i++) {
-      if (planetsData[i]) { // Verificar si existen datos para este índice
-        visibleX.push(planetsData[i].x);
-        visibleY.push(planetsData[i].y);
-
-        // Si es el planeta actual, hacerlo más grande y destacarlo
-        if (i === currentYearIndex) {
-          visibleSizes.push(planetsData[i].baseSize * SIZE_MULTIPLIER);
-          visibleColors.push(HIGHLIGHT_COLOR);
-        } else {
-          visibleSizes.push(planetsData[i].baseSize);
-          visibleColors.push(PLANET_COLOR);
-        }
-        visibleTexts.push(planetsData[i].text);
-      } else {
-        console.warn(`Missing planet data for index ${i}`);
-      }
-    }
-
-    // Actualizar la gráfica con los planetas visibles
-    Plotly.react('timeline', [{
-      x: visibleX,
-      y: visibleY,
-      mode: 'markers',
-      type: 'scatter',
-      marker: {
-        size: visibleSizes,
-        color: visibleColors,
-        showscale: false,
-        line: {
-          color: 'rgba(100, 150, 255, 0.5)',
-          width: 1
+      /**
+       * CONFIGURACIÓN DE LA GRÁFICA
+       */
+      // Inicializar la gráfica con ejes estáticos
+      const layout = {
+        title: {
+          text: 'Timeline of Exoplanet Discoveries',
+          font: {
+            color: '#FFD700',
+            size: 24,
+          },
         },
-        opacity: 0.8,
-        symbol: 'circle' // Asegurar que los puntos son círculos
-      },
-      text: visibleTexts,
-      hoverinfo: 'none'  // No mostrar texto en hover
-    }], layout, {
-      transition: {
-        duration: 1200,
-        easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)'
-      },
-      frame: {
-        duration: 1200,
-        redraw: false
-      }
-    }).then(() => {
-      // Asegurarse de que el cursor esté configurado después de la actualización del gráfico
-      setPointCursor();
-    });
-
-    // Configurar temporizador para mostrar la tarjeta del planeta actual después de 1 segundo
-    if (!document.getElementById('planet-card').classList.contains('visible')) {
-      planetCardTimer = setTimeout(() => {
-        console.log('Automatic timer showing card for:', planet.pl_name);
-        showPlanetCard(planet);
-        planetCardTimer = null; // Limpiar referencia del temporizador después de la ejecución
-      }, 1000);
-    }
-
-  } else {
-    console.error('Invalid year index:', currentYearIndex);
-  }
-}
-
-/**
- * FUNCIONES PARA INTERACCIÓN DE PLANETAS
- */
-// Configurar cursor y estilos para los puntos del gráfico
-function setPointCursor() {
-  const points = document.querySelectorAll('#timeline .scatterlayer .trace .points path');
-  points.forEach(point => {
-    // Establecer cursor pointer y preparar para efectos hover
-    point.style.cursor = 'pointer';
-    
-    // Asegurar que las transiciones estén aplicadas
-    if (!point.style.transition) {
-      point.style.transition = 'transform 0.3s ease-out, opacity 0.2s ease';
-    }
-  });
-  
-  // También establecer cursor predeterminado para el fondo del gráfico
-  const plotBg = document.querySelector('#timeline .plot-container .svg-container');
-  if (plotBg) {
-    plotBg.style.cursor = 'default';
-  }
-}
-
-/**
- * SCATTER PLOT VISUALIZATION
- */
-function createScatterPlot() {
-  // Filter methods initially available
-  const discoveryMethods = [...new Set(allPlanetsData
-    .filter(p => p.discoverymethod)
-    .map(p => p.discoverymethod))];
-  
-  const methodSelect = document.getElementById('discovery-method');
-  
-  // Clear existing options first
-  while (methodSelect.options.length > 1) {
-    methodSelect.remove(1);
-  }
-  
-  // Populate discovery method dropdown
-  discoveryMethods.forEach(method => {
-    const option = document.createElement('option');
-    option.value = method;
-    option.textContent = method;
-    methodSelect.appendChild(option);
-  });
-  
-  // Get filter elements
-  const minYearSlider = document.getElementById('min-year');
-  const maxYearSlider = document.getElementById('max-year');
-  const minYearValue = document.getElementById('min-year-value');
-  const maxYearValue = document.getElementById('max-year-value');
-  const esiSlider = document.getElementById('esi-min');
-  const esiValue = document.getElementById('esi-value');
-  const applyButton = document.getElementById('apply-filters');
-  const resetButton = document.getElementById('reset-filters');
-  
-  // Set initial year range to match data
-  const years = allPlanetsData.map(p => p.disc_year).filter(y => y);
-  if (years.length > 0) {
-    const minYear = Math.min(...years);
-    const maxYear = Math.max(...years);
-    
-    minYearSlider.min = minYear;
-    minYearSlider.value = minYear;
-    minYearValue.textContent = minYear;
-    
-    maxYearSlider.min = minYear;
-    maxYearSlider.max = maxYear;
-    maxYearSlider.value = maxYear;
-    maxYearValue.textContent = maxYear;
-  }
-  
-  // Update slider values on input
-  minYearSlider.addEventListener('input', () => {
-    const val = parseInt(minYearSlider.value);
-    minYearValue.textContent = val;
-    
-    // Ensure min doesn't exceed max
-    if (val > parseInt(maxYearSlider.value)) {
-      maxYearSlider.value = val;
-      maxYearValue.textContent = val;
-    }
-  });
-  
-  maxYearSlider.addEventListener('input', () => {
-    const val = parseInt(maxYearSlider.value);
-    maxYearValue.textContent = val;
-    
-    // Ensure max doesn't go below min
-    if (val < parseInt(minYearSlider.value)) {
-      minYearSlider.value = val;
-      minYearValue.textContent = val;
-    }
-  });
-  
-  esiSlider.addEventListener('input', () => {
-    const val = parseFloat(esiSlider.value);
-    esiValue.textContent = val.toFixed(2);
-  });
-  
- // Define the update function for the scatter plot
-function updateScatterPlot() {
-  // Get current filter values
-  const minYear = parseInt(minYearSlider.value);
-  const maxYear = parseInt(maxYearSlider.value);
-  const minESI = parseFloat(esiSlider.value);
-  const method = methodSelect.value;
-  
-  // Update the ESI value display properly
-  document.getElementById('esi-value').textContent = minESI.toFixed(2);
-  
-  // Filter data based on selected criteria
-  const filteredPlanets = allPlanetsData.filter(planet => {
-    // Filter by year
-    if (!planet.disc_year || planet.disc_year < minYear || planet.disc_year > maxYear) return false;
-    
-    // Filter by ESI
-    if (typeof planet.ESI === 'number' && planet.ESI < minESI) return false;
-    
-    // Filter by discovery method
-    if (method !== 'all' && planet.discoverymethod !== method) return false;
-    
-    // Include planets that have both radius and orbit data
-    return typeof planet.pl_orbsmax === 'number' && typeof planet.pl_rade === 'number';
-  });
-  
-  // Get year range for color scaling
-  const yearMin = Math.min(...filteredPlanets.map(p => p.disc_year));
-  const yearMax = Math.max(...filteredPlanets.map(p => p.disc_year));
-  
-  // Create scatter data
-  const scatterData = [{
-    x: filteredPlanets.map(planet => planet.pl_orbsmax),
-    y: filteredPlanets.map(planet => planet.pl_rade),
-    mode: 'markers',
-    type: 'scatter',
-    marker: {
-      size: filteredPlanets.map(planet => {
-        const esi = typeof planet.ESI === 'number' ? planet.ESI : 0;
-        return 10 + esi * 20; // Scale by ESI for size (larger = more Earth-like)
-      }),
-      color: filteredPlanets.map(planet => planet.disc_year),
-      colorscale: 'Viridis',
-      colorbar: {
-        title: 'Discovery Year',
-        titlefont: { color: '#adf' },
-        tickfont: { color: '#adf' }
-      },
-      cmin: yearMin,
-      cmax: yearMax,
-      line: {
-        color: 'rgba(255, 255, 255, 0.5)',
-        width: 1
-      },
-      opacity: 0.8
-    },
-    text: filteredPlanets.map(planet => 
-      `${planet.pl_name}<br>ESI: ${planet.ESI ? planet.ESI.toFixed(2) : 'Unknown'}<br>` +
-      `Radius: ${planet.pl_rade.toFixed(2)} R⊕<br>` +
-      `Orbital Distance: ${planet.pl_orbsmax.toFixed(3)} AU<br>` +
-      `Discovery Year: ${planet.disc_year}`
-    ),
-    hoverinfo: 'text',
-  }];
-  
-  // Layout settings with improved axes
-  const scatterLayout = {
-    title: {
-      text: 'Exoplanet Radius vs Orbital Distance',
-      font: { color: '#FFD700', size: 22 },
-      y: 0.97
-    },
-    paper_bgcolor: 'rgba(0,0,0,0)',
-    plot_bgcolor: 'rgba(0,0,0,0)',
-    showlegend: false,
-    xaxis: {
-      title: {
-        text: 'Orbital Distance (AU)',
-        font: { color: '#adf', size: 16 }
-      },
-      type: 'log',
-      showgrid: true,
-      gridcolor: 'rgba(100, 150, 255, 0.2)',
-      zeroline: false,
-      tickfont: { color: '#adf', size: 14 },
-      fixedrange: true,
-      exponentformat: 'power',
-      tickformat: '.1f',
-      // Better tick values for log scale
-      tickvals: [0.01, 0.1, 1, 10, 100],
-      ticktext: ['0.01', '0.1', '1', '10', '100']
-    },
-    yaxis: {
-      title: {
-        text: 'Planet Radius (Earth Radii)',
-        font: { color: '#adf', size: 16 }
-      },
-      type: 'log',
-      showgrid: true,
-      gridcolor: 'rgba(100, 150, 255, 0.2)',
-      zeroline: false,
-      tickfont: { color: '#adf', size: 14 },
-      fixedrange: true,
-      // Better tick values for log scale
-      tickvals: [0.1, 1, 10, 100],
-      ticktext: ['0.1', '1', '10', '100']
-    },
-    hovermode: 'closest',
-    hoverlabel: {
-      bgcolor: 'rgba(20, 40, 80, 0.9)',
-      bordercolor: '#adf',
-      font: { color: '#fff', size: 14 }
-    },
-    margin: { l: 70, r: 40, t: 70, b: 70 },
-    annotations: [
-      {
-        text: 'Point size represents Earth Similarity Index (ESI)',
-        showarrow: false,
-        font: { color: '#adf', size: 14 },
-        xref: 'paper',
-        yref: 'paper',
-        x: 0.5,
-        y: 1.1,
-        xanchor: 'center',
-        yanchor: 'bottom'
-      },
-      // Earth arrow annotation removed as requested
-      {
-        text: 'Habitable Zone',
-        showarrow: false,
-        font: { color: 'rgba(0, 255, 0, 0.8)', size: 12 },
-        x: 1.1,
-        y: 0.5,
-        xanchor: 'left',
-        yanchor: 'middle'
-      }
-    ],
-    shapes: [
-      // Habitable zone approximation with better labeling
-      {
-        type: 'rect',
-        xref: 'x',
-        yref: 'paper',
-        x0: 0.75,
-        x1: 1.5,
-        y0: 0,
-        y1: 1,
-        fillcolor: 'rgba(0, 255, 0, 0.1)',
-        line: {
-          width: 1,
-          color: 'rgba(0, 255, 0, 0.3)'
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        xaxis: {
+          title: {
+            text: 'Year of Discovery',
+            font: {
+              color: '#adf',
+              size: 14,
+            },
+          },
+          tickfont: {
+            color: '#adf',
+          },
+          showgrid: false,
+          tickmode: 'array',
+          tickvals: [
+            2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021,
+            2022, 2023, 2024,
+          ],
+          range: [2010, 2025],
         },
-        layer: 'below'
+        yaxis: {
+          title: {
+            text: 'Earth Similarity Index (ESI)',
+            font: {
+              color: '#adf',
+              size: 14,
+            },
+          },
+          tickfont: {
+            color: '#adf',
+          },
+          showgrid: false,
+          range: [0, 1],
+        },
+        hovermode: 'closest',
+        dragmode: false,
       }
-    ]
-  };
-  
-  const config = {
-    responsive: true,
-    displayModeBar: false
-  };
-  
-  Plotly.react('scatter-plot', scatterData, scatterLayout, config);
-  
-  // Set point cursor and custom hover effects
-  setTimeout(() => {
-    const points = document.querySelectorAll('#scatter-plot .scatterlayer .trace .points path');
-    points.forEach(point => {
-      point.style.cursor = 'pointer';
-      
-      // Add click event to show planet details on click
-      point.addEventListener('click', function(event) {
-        // Find the index of the clicked point
-        const pointIndex = Array.from(points).indexOf(point);
-        if (pointIndex >= 0 && pointIndex < filteredPlanets.length) {
-          showPlanetCard(filteredPlanets[pointIndex]);
-        }
-      });
-    });
-  }, 500);
-}
 
-// Fix the ESI slider input event
-esiSlider.addEventListener('input', () => {
-  const val = parseFloat(esiSlider.value);
-  document.getElementById('esi-value').textContent = val.toFixed(2);
-});
-
-  // Apply filters when button is clicked
-  applyButton.addEventListener('click', () => {
-    updateScatterPlot();
-  });
-  
-  // Reset filters to default
-  resetButton.addEventListener('click', () => {
-    minYearSlider.value = minYearSlider.min;
-    maxYearSlider.value = maxYearSlider.max;
-    esiSlider.value = 0;
-    methodSelect.value = 'all';
-    
-    minYearValue.textContent = minYearSlider.min;
-    maxYearValue.textContent = maxYearSlider.max;
-    esiValue.textContent = '0';
-    
-    updateScatterPlot();
-  });
-  
-  // Initial update
-  updateScatterPlot();
-}
-
-// Function to show and animate the planet card
-function showPlanetCard(planet) {
-  if (!planet) {
-    console.error("showPlanetCard called with invalid planet data:", planet);
-    return;
-  }
-  
-  const planetCard = document.getElementById('planet-card');
-  const overlay = document.getElementById('overlay');
-
-  // Update basic content
-  planetCard.querySelector('.planet-name').textContent = planet.pl_name || 'Unknown Planet';
-  
-  // Basic info (tab 1)
-  document.getElementById('disc-year').textContent = planet.disc_year || 'Unknown';
-  
-  // ESI (calculated value)
-  const esiValue = (typeof planet.ESI === 'number' && !isNaN(planet.ESI)) ? planet.ESI.toFixed(2) : 'N/A';
-  document.getElementById('esi-value').textContent = esiValue;
-  
-  // Radius
-  document.getElementById('radius-value').innerHTML = planet.pl_rade 
-    ? `${planet.pl_rade.toFixed(2)} Times Earth` 
-    : 'Unknown';
-    
-  // Mass
-  document.getElementById('mass-value').innerHTML = planet.pl_bmasse 
-    ? `${planet.pl_bmasse.toFixed(2)} Times Earth` 
-    : 'Unknown';
-  
-  // Temperature
-  document.getElementById('temp-value').textContent = planet.pl_eqt ? `${planet.pl_eqt} K` : 'Unknown';
-  
-  // Discovery facility
-  document.getElementById('facility-value').textContent = planet.disc_facility || 'Unknown';
-
-  // System info (tab 2)
-  document.getElementById('hostname-value').textContent = planet.hostname || 'Unknown';
-  document.getElementById('sysnum-value').textContent = planet.sy_snum || 'Unknown';
-  document.getElementById('sypnum-value').textContent = planet.sy_pnum || 'Unknown';
-  
-  if (planet.pl_refname) {
-    const hrefMatch = planet.pl_refname.match(/href=([^ >]+)/);
-    if (hrefMatch) {
-      const url = hrefMatch[1];
-      document.getElementById('refname-value').innerHTML = `<a href="${url}" target="_blank">Reference</a>`;
-    } else {
-      document.getElementById('refname-value').textContent = 'NASA Exoplanet Archive';
-    }
-  } else {
-    document.getElementById('refname-value').textContent = 'NASA Exoplanet Archive';
-  }
-  
-  document.getElementById('distance-value').textContent = planet.sy_dist ? `${planet.sy_dist.toFixed(1)} pc` : 'Unknown';
-
-  // Orbit info (tab 3)
-  document.getElementById('orbper-value').textContent = planet.pl_orbper ? `${planet.pl_orbper.toFixed(1)} days` : 'Unknown';
-  document.getElementById('orbsmax-value').textContent = planet.pl_orbsmax ? `${planet.pl_orbsmax.toFixed(3)} AU` : 'Unknown';
-
-  // Generate planet image and type label
-  generatePlanetImage(planet);
-
-  // Show the card and overlay with animation
-  overlay.classList.add('active');
-  planetCard.classList.add('visible');
-}
-
-// Función para cerrar la tarjeta del planeta
-function closePlanetCard() {
-  const planetCard = document.getElementById('planet-card');
-  const overlay = document.getElementById('overlay');
-
-  planetCard.classList.remove('visible');
-  overlay.classList.remove('active');
-}
-
-/**
- * 3D PLANET VISUALIZATION
- */
-function generatePlanetImage(planet) {
-  const container = document.querySelector('.planet-image-container');
-  
-  // Clear any previous 3D renderers and elements
-  while (container.firstChild) {
-    container.firstChild.remove();
-  }
-  
-  // Create planet type label first
-  const planetType = document.createElement('div');
-  planetType.className = 'planet-type';
-  container.appendChild(planetType);
-  
-  // Extract planet properties with defaults
-  const esiNum = (typeof planet.ESI === 'number' && !isNaN(planet.ESI)) ? planet.ESI : -1;
-  const temperature = planet.pl_eqt || 300; // Default if unknown
-  const radius = planet.pl_rade || 1; // Default if unknown
-  const mass = planet.pl_bmasse || 1; // Default if unknown
-  const orbitalPeriod = planet.pl_orbper || 365; // Default if unknown
-  
-  // Set planet type based on ESI
-  if (esiNum >= 0.8) {
-    planetType.textContent = "Earth-like";
-    planetType.style.backgroundColor = "rgba(0, 255, 0, 0.8)";
-  } else if (esiNum >= 0.6) {
-    planetType.textContent = "Semi-habitable";
-    planetType.style.backgroundColor = "rgba(255, 215, 0, 0.8)";
-  } else if (esiNum >= 0) {
-    planetType.textContent = "Exotic";
-    planetType.style.backgroundColor = "rgba(255, 165, 0, 0.8)";
-  } else {
-    planetType.textContent = "Unknown";
-    planetType.style.backgroundColor = "rgba(128, 128, 128, 0.8)";
-  }
-  
-  // Add card shine effect
-  const cardShine = document.createElement('div');
-  cardShine.className = 'card-shine';
-  container.appendChild(cardShine);
-  
-  // Scene setup
-  const scene = new THREE.Scene();
-  const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000);
-  camera.position.z = 2;
-  
-  // Create renderer
-  const renderer = new THREE.WebGLRenderer({ 
-    antialias: true,
-    alpha: true 
-  });
-  renderer.setSize(180, 180);
-  renderer.setClearColor(0x000000, 0); // Transparent background
-  container.appendChild(renderer.domElement);
-  
-  // Create planet geometry - size based on radius
-  const geometry = new THREE.SphereGeometry(1, 32, 32);
-  
-  // Create planet material based on ESI and other properties
-  let planetMaterial;
-  let atmosphereColor;
-  
-  if (esiNum >= 0.8) {
-    // Earth-like planet
-    planetMaterial = createEarthLikeMaterial(planet);
-    atmosphereColor = new THREE.Color(
-      0.55 - Math.min(0.3, (temperature - 250) / 500), // More blue for cooler planets
-      0.8, 
-      1.0
-    );
-  } else if (esiNum >= 0.6) {
-    // Semi-habitable planet
-    planetMaterial = createSemiHabitableMaterial(planet);
-    atmosphereColor = new THREE.Color(
-      0.7,
-      0.7 + Math.min(0.3, (temperature - 250) / 1000), // More green for warmer planets
-      0.8
-    );
-  } else {
-    // Less Earth-like
-    planetMaterial = createAlienPlanetMaterial(planet);
-    atmosphereColor = new THREE.Color(
-      0.9 + Math.min(0.1, (temperature - 400) / 1000), // More red for hotter planets
-      0.6 - Math.min(0.3, (temperature - 300) / 700),
-      0.4 - Math.min(0.3, (temperature - 300) / 1000)
-    );
-  }
-  
-  // Create planet mesh
-  const planet3D = new THREE.Mesh(geometry, planetMaterial);
-  scene.add(planet3D);
-  
-  // Add atmosphere glow with size based on radius
-  const atmosphereSize = 1.05 + (radius * 0.05); // Bigger planets have thicker atmospheres
-  const atmosphereGeometry = new THREE.SphereGeometry(atmosphereSize, 32, 32);
-  const atmosphereMaterial = new THREE.MeshBasicMaterial({ 
-    color: atmosphereColor,
-    transparent: true,
-    opacity: 0.2
-  });
-  const atmosphere = new THREE.Mesh(atmosphereGeometry, atmosphereMaterial);
-  scene.add(atmosphere);
-  
-  // Add ambient light
-  const ambientLight = new THREE.AmbientLight(0x404040);
-  scene.add(ambientLight);
-  
-  // Add directional light (sun)
-  const directionalLight = new THREE.DirectionalLight(0xffffff, 1);
-  directionalLight.position.set(5, 3, 5);
-  scene.add(directionalLight);
-  
-  // Animation function - adjust rotation based on orbital period
-  const rotationSpeed = 0.005 * (365 / Math.max(50, orbitalPeriod));
-  function animate() {
-    requestAnimationFrame(animate);
-    
-    // Rotate planet - faster rotation for shorter orbital periods
-    planet3D.rotation.y += rotationSpeed;
-    atmosphere.rotation.y += rotationSpeed * 0.4;
-    
-    renderer.render(scene, camera);
-  }
-  
-  // Start animation
-  animate();
-  
-  // Create different materials based on planet type and properties
-  function createEarthLikeMaterial(planet) {
-    const planetName = planet.pl_name || "";
-    const temperature = planet.pl_eqt || 300;
-    const radius = planet.pl_rade || 1;
-    const mass = planet.pl_bmasse || 1;
-    
-    // Use consistent seed for each planet name
-    const seed = hashString(planetName);
-    const seededRandom = createSeededRandom(seed);
-    
-    // Create a procedurally generated Earth-like texture
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 256;
-    const ctx = canvas.getContext('2d');
-    
-    // Base ocean color - adjust based on temperature
-    const blueValue = 200 + Math.min(55, Math.max(-55, (300 - temperature) * 0.5));
-    ctx.fillStyle = `rgb(28, ${Math.max(80, 106 + (300 - temperature) * 0.1)}, ${blueValue})`;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Generate continents - more for higher mass
-    const continentCount = 5 + Math.floor(mass);
-    const continentColor = `rgb(${39 + (temperature - 280) * 0.1}, ${160 + (300 - temperature) * 0.1}, ${70 + (300 - temperature) * 0.2})`;
-    ctx.fillStyle = continentColor;
-    
-    for (let i = 0; i < continentCount; i++) {
-      const x = seededRandom() * canvas.width;
-      const y = seededRandom() * canvas.height;
-      const size = 30 + seededRandom() * 80;
-      
-      // Draw irregular continent shape
-      ctx.beginPath();
-      for (let j = 0; j < 10; j++) {
-        const angle = (j / 10) * Math.PI * 2;
-        const radius = size * (0.7 + seededRandom() * 0.6);
-        const xPoint = x + Math.cos(angle) * radius;
-        const yPoint = y + Math.sin(angle) * radius;
-        
-        if (j === 0) {
-          ctx.moveTo(xPoint, yPoint);
-        } else {
-          ctx.lineTo(xPoint, yPoint);
-        }
+      // Configuración para Plotly
+      const config = {
+        displayModeBar: false,
+        responsive: true,
+        scrollZoom: false,
+        showTips: false,
+        modeBarButtonsToRemove: ['select2d', 'lasso2d'],
       }
-      ctx.closePath();
-      ctx.fill();
-    }
-    
-    // Adjust ice caps based on temperature
-    const iceCapsSize = Math.max(0, (350 - temperature) * 0.001);
-    if (iceCapsSize > 0) {
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, 0, canvas.width, canvas.height * iceCapsSize);
-      ctx.fillRect(0, canvas.height * (1 - iceCapsSize), canvas.width, canvas.height * iceCapsSize);
-    }
-    
-    // Create texture from canvas
-    const texture = new THREE.CanvasTexture(canvas);
-    
-    // Create material with texture
-    return new THREE.MeshStandardMaterial({
-      map: texture,
-      roughness: 0.7,
-      metalness: 0.1
-    });
-  }
-  
-  function createSemiHabitableMaterial(planet) {
-    const planetName = planet.pl_name || "";
-    const temperature = planet.pl_eqt || 300;
-    const radius = planet.pl_rade || 1;
-    const mass = planet.pl_bmasse || 1;
-    
-    // Use consistent seed for each planet name
-    const seed = hashString(planetName);
-    const seededRandom = createSeededRandom(seed);
-    
-    // Create a procedurally generated texture
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 256;
-    const ctx = canvas.getContext('2d');
-    
-    // Base surface color based on temperature
-    const redValue = 185 + Math.min(70, Math.max(-50, (temperature - 300) * 0.4));
-    const greenValue = 118 + Math.min(40, Math.max(-50, (300 - temperature) * 0.2));
-    ctx.fillStyle = `rgb(${redValue}, ${greenValue}, 64)`;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Generate vegetation patches - more for moderate temperatures
-    const vegetationCount = Math.max(5, 15 - Math.abs(temperature - 300) / 20);
-    const vegetationColor = `rgb(${93 + (temperature - 300) * 0.2}, ${148 + (300 - temperature) * 0.3}, ${81 - Math.abs(temperature - 300) * 0.1})`;
-    ctx.fillStyle = vegetationColor;
-    
-    for (let i = 0; i < vegetationCount; i++) {
-      const x = seededRandom() * canvas.width;
-      const y = seededRandom() * canvas.height;
-      const size = 10 + seededRandom() * (40 * (radius / 2));
-      
-      ctx.beginPath();
-      ctx.arc(x, y, size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    
-    // Add water bodies - fewer for hotter planets
-    const waterCount = Math.max(2, 8 - (temperature - 280) / 40);
-    const waterColor = `rgb(65, ${Math.max(100, 135 - (temperature - 280) * 0.3)}, ${Math.max(120, 170 - (temperature - 280) * 0.5)})`;
-    ctx.fillStyle = waterColor;
-    
-    for (let i = 0; i < waterCount; i++) {
-      const x = seededRandom() * canvas.width;
-      const y = seededRandom() * canvas.height;
-      const size = 20 + seededRandom() * (60 * mass);
-      
-      ctx.beginPath();
-      ctx.arc(x, y, size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    
-    // Add temperature-based features
-    if (temperature > 350) {
-      // Add lava flow or hot spots for hot planets
-      ctx.fillStyle = `rgba(255, ${120 + seededRandom() * 50}, 30, 0.7)`;
-      for (let i = 0; i < 8; i++) {
-        const x = seededRandom() * canvas.width;
-        const y = seededRandom() * canvas.height;
-        const size = 5 + seededRandom() * 20;
-        
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-    
-    // Create texture from canvas
-    const texture = new THREE.CanvasTexture(canvas);
-    
-    // Create material with texture
-    return new THREE.MeshStandardMaterial({
-      map: texture,
-      roughness: 0.8,
-      metalness: 0.2
-    });
-  }
-  
-  function createAlienPlanetMaterial(planet) {
-    const planetName = planet.pl_name || "";
-    const temperature = planet.pl_eqt || 300;
-    const radius = planet.pl_rade || 1;
-    const mass = planet.pl_bmasse || 1;
-    
-    // Use consistent seed for each planet name
-    const seed = hashString(planetName);
-    const seededRandom = createSeededRandom(seed);
-    
-    // Create a procedurally generated texture
-    const canvas = document.createElement('canvas');
-    canvas.width = 512;
-    canvas.height = 256;
-    const ctx = canvas.getContext('2d');
-    
-    // Base planet color - adjusted based on temperature
-    const redBase = 140 + Math.min(115, (temperature - 200) / 3);
-    const greenBase = Math.max(30, 80 + (350 - temperature) * 0.2);
-    const blueBase = Math.max(20, 40 + (350 - temperature) * 0.15);
-    
-    const baseColor = `rgb(${redBase}, ${greenBase}, ${blueBase})`;
-    ctx.fillStyle = baseColor;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    
-    // Create bands - more for larger planets
-    const numberOfBands = 2 + Math.floor(radius * 0.8);
-    for (let i = 0; i < numberOfBands; i++) {
-      // Color for the band based on temperature and position
-      const bandRed = Math.min(255, redBase + 40 + seededRandom() * 35);
-      const bandGreen = Math.min(255, greenBase + 40 + seededRandom() * 30);
-      const bandBlue = Math.min(255, blueBase + 20 + seededRandom() * 20);
-      
-      const bandColor = `rgba(${bandRed}, ${bandGreen}, ${bandBlue}, 0.7)`;
-      ctx.fillStyle = bandColor;
-      
-      // Position and size of band
-      const yPos = i * (canvas.height / numberOfBands);
-      const height = canvas.height / (numberOfBands * (1 + seededRandom()));
-      
-      ctx.fillRect(0, yPos, canvas.width, height);
-    }
-    
-    // Add craters/spots - more for massive planets
-    const spotCount = 20 + Math.floor(mass * 10);
-    const spotColor = `rgba(${Math.min(255, redBase - 60)}, ${Math.max(0, greenBase - 40)}, ${Math.max(0, blueBase - 20)}, 0.6)`;
-    ctx.fillStyle = spotColor;
-    
-    for (let i = 0; i < spotCount; i++) {
-      const x = seededRandom() * canvas.width;
-      const y = seededRandom() * canvas.height;
-      const size = 2 + seededRandom() * 15;
-      
-      ctx.beginPath();
-      ctx.arc(x, y, size, 0, Math.PI * 2);
-      ctx.fill();
-    }
-    
-    // For very hot planets, add more bright areas
-    if (temperature > 600) {
-      ctx.fillStyle = `rgba(255, 200, 100, 0.3)`;
-      for (let i = 0; i < 5; i++) {
-        const x = seededRandom() * canvas.width;
-        const y = seededRandom() * canvas.height;
-        const size = 10 + seededRandom() * 30;
-        
-        ctx.beginPath();
-        ctx.arc(x, y, size, 0, Math.PI * 2);
-        ctx.fill();
-      }
-    }
-    
-    // For very large planets, add "storm" features
-    if (radius > 3) {
-      ctx.fillStyle = `rgba(255, 255, 255, 0.2)`;
-      const stormX = seededRandom() * canvas.width;
-      const stormY = seededRandom() * canvas.height;
-      const stormSize = 30 + seededRandom() * 50;
-      
-      ctx.beginPath();
-      ctx.arc(stormX, stormY, stormSize, 0, Math.PI * 2);
-      ctx.fill();
-      
-      // Add swirl in storm
-      const swirls = 5 + Math.floor(seededRandom() * 5);
-      ctx.strokeStyle = `rgba(255, 255, 255, 0.3)`;
-      ctx.lineWidth = 2;
-      
-      for (let i = 0; i < swirls; i++) {
-        const swirlRadius = (i / swirls) * stormSize;
-        ctx.beginPath();
-        ctx.arc(stormX, stormY, swirlRadius, 0, Math.PI * (1.5 + seededRandom()));
-        ctx.stroke();
-      }
-    }
-    
-    // Create texture from canvas
-    const texture = new THREE.CanvasTexture(canvas);
-    
-    // Create material with texture
-    return new THREE.MeshStandardMaterial({
-      map: texture,
-      roughness: 0.9,
-      metalness: 0.3
-    });
-  }
-  
-  // Helper functions for consistent planet generation
-  function hashString(str) {
-    let hash = 0;
-    if (!str) str = "defaultSeed";
-    for (let i = 0; i < str.length; i++) {
-      const char = str.charCodeAt(i);
-      hash = ((hash << 5) - hash) + char;
-      hash = hash & hash;
-    }
-    return hash;
-  }
-  
-  function createSeededRandom(seed) {
-    return function() {
-      const x = Math.sin(seed++) * 10000;
-      return x - Math.floor(x);
-    };
-  }
-}
 
-// Manejar las pestañas de la tarjeta del planeta
-document.addEventListener('DOMContentLoaded', function() {
-  const tabButtons = document.querySelectorAll('.tab-button');
-  
-  tabButtons.forEach(button => {
-    button.addEventListener('click', function() {
-      // Desactivar todos los botones y ocultar contenido
-      tabButtons.forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
-      
-      // Activar el botón seleccionado y mostrar su contenido
-      button.classList.add('active');
-      const tabId = button.getAttribute('data-tab');
-      document.getElementById(`${tabId}-tab`).classList.remove('hidden');
-    });
-  });
-  
-  // Start button click handler
-  const startButton = document.getElementById('start-button');
-  const splashScreen = document.getElementById('splash-screen');
-  
-  if (startButton && splashScreen) {
-    startButton.addEventListener('click', function() {
-      // Hide splash screen with animation
-      splashScreen.classList.add('hidden');
-      
-      // Show content with delay
-      setTimeout(() => {
-        document.querySelectorAll('.content-container').forEach(container => {
-          container.classList.add('visible');
-        });
-        
-        // Re-initialize the visualization after showing the content
-        setTimeout(() => {
-          if (typeof Plotly !== 'undefined' && document.getElementById('timeline')) {
-            Plotly.react('timeline', [{
-              x: [],
-              y: [],
-              mode: 'markers',
-              type: 'scatter',
-              marker: {
-                size: [],
-                color: PLANET_COLOR,
-                showscale: false,
-                line: {
-                  color: 'rgba(100, 150, 255, 0.5)',
-                  width: 1
-                },
-                opacity: 0.8
+      // Crear la gráfica inicial con ejes estáticos
+      Plotly.newPlot(
+        'timeline',
+        [
+          {
+            x: [],
+            y: [],
+            mode: 'markers',
+            type: 'scatter',
+            marker: {
+              size: [],
+              color: PLANET_COLOR,
+              showscale: false,
+              line: {
+                color: 'rgba(100, 150, 255, 0.5)',
+                width: 1,
               },
-              text: [],
-              hoverinfo: 'none'
-            }], layout, config);
-            
-            // If data is already loaded, update the timeline
-            if (filteredData && filteredData.length > 0) {
-              updateTimeline();
+              opacity: 0.8,
+            },
+            text: [],
+            hoverinfo: 'none',
+          },
+        ],
+        layout,
+        config
+      )
+
+      /**
+       * CARGA Y PROCESAMIENTO DE DATOS
+       */
+      // Cargar los datos desde timeline.json
+      fetch('timeline.json')
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`)
+          }
+          return response.json()
+        })
+        .then((jsonData) => {
+          data = jsonData
+          allPlanetsData = jsonData // Guardar todos los datos
+
+          // Filtrar los datos para obtener el planeta con el mayor ESI por año
+          const planetsByYear = {}
+          data.forEach((planet) => {
+            if (!planet.disc_year) return // Ignorar planetas sin año de descubrimiento
+
+            const year = planet.disc_year
+            // Asegurar que ESI sea un número válido
+            const esiValue =
+              typeof planet.ESI === 'number' && !isNaN(planet.ESI)
+                ? planet.ESI
+                : 0
+            if (!planetsByYear[year] || esiValue > planetsByYear[year].ESI) {
+              planetsByYear[year] = { ...planet, ESI: esiValue } // Almacenar el ESI validado
+            }
+          })
+
+          // Convertir el objeto en una lista ordenada por año
+          filteredData = Object.values(planetsByYear).sort(
+            (a, b) => a.disc_year - b.disc_year
+          )
+
+          // Crear mapeo de año a índice
+          filteredData.forEach((planet, index) => {
+            yearToIndexMap[planet.disc_year] = index
+          })
+
+          // Preprocesar los datos de los planetas
+          planetsData.length = 0 // Limpiar datos previos si existen
+          for (let i = 0; i < filteredData.length; i++) {
+            const planet = filteredData[i]
+            planetsData.push({
+              x: planet.disc_year,
+              y: Math.max(0, planet.ESI), // Usar el ESI validado
+              baseSize: (planet.pl_rade || 1) * 10,
+              text: `Planet: ${planet.pl_name}<br>Year: ${
+                planet.disc_year
+              }<br>ESI: ${planet.ESI.toFixed(2)}<br>Radius: ${
+                planet.pl_rade || 'N/A'
+              } Earth radius`,
+            })
+          }
+
+          // Inicializar la gráfica con el primer planeta
+          // updateTimeline();
+
+          // Crear el scatter plot
+          createScatterPlot()
+
+          // Agregar evento para detectar clics en los planetas
+          const plotDiv = document.getElementById('timeline')
+          plotDiv.on('plotly_click', function (eventData) {
+            // Si se hizo clic en un punto
+            if (eventData.points && eventData.points.length > 0) {
+              const point = eventData.points[0]
+              const pointIndex = point.pointNumber
+
+              // Si estamos en vista normal y hacemos clic en un planeta
+              if (
+                pointIndex >= 0 &&
+                pointIndex < filteredData.length &&
+                pointIndex <= currentYearIndex
+              ) {
+                // Mostrar la tarjeta del planeta
+                console.log(
+                  'Showing card for planet:',
+                  filteredData[pointIndex].pl_name
+                )
+                showPlanetCard(filteredData[pointIndex])
+
+                // Cancelar el temporizador para evitar mostrar otra tarjeta automáticamente
+                if (planetCardTimer) {
+                  clearTimeout(planetCardTimer)
+                  planetCardTimer = null
+                }
+              }
+            }
+          })
+        })
+        .catch((error) => {
+          console.error('Error loading or processing timeline.json:', error)
+          // Mostrar mensaje de error al usuario
+          const header = document.getElementById('header')
+          const errorMsg = document.createElement('p')
+          errorMsg.style.color = 'red'
+          errorMsg.textContent =
+            'Error loading planet data. Please check the console for details.'
+          header.appendChild(errorMsg)
+        })
+
+      /**
+       * ACTUALIZACIÓN DE LA LÍNEA DE TIEMPO
+       */
+      // Función para actualizar la línea de tiempo general
+      function updateTimeline() {
+        // Cancelar cualquier temporizador existente para mostrar la tarjeta
+        if (planetCardTimer) {
+          clearTimeout(planetCardTimer)
+          planetCardTimer = null
+        }
+
+        // Cerrar la tarjeta si está abierta
+        closePlanetCard()
+
+        if (currentYearIndex >= 0 && currentYearIndex < filteredData.length) {
+          const planet = filteredData[currentYearIndex]
+
+          // Determinar dirección de navegación
+          const isForward = currentYearIndex >= previousYearIndex
+          previousYearIndex = currentYearIndex
+
+          // Crear arrays para mostrar solo hasta el índice actual
+          const visibleX = []
+          const visibleY = []
+          const visibleSizes = []
+          const visibleColors = []
+          const visibleTexts = []
+
+          // Acumular solo hasta el índice actual
+          for (let i = 0; i <= currentYearIndex; i++) {
+            if (planetsData[i]) {
+              // Verificar si existen datos para este índice
+              visibleX.push(planetsData[i].x)
+              visibleY.push(planetsData[i].y)
+
+              // Si es el planeta actual, hacerlo más grande y destacarlo
+              if (i === currentYearIndex) {
+                visibleSizes.push(planetsData[i].baseSize * SIZE_MULTIPLIER)
+                visibleColors.push(HIGHLIGHT_COLOR)
+              } else {
+                visibleSizes.push(planetsData[i].baseSize)
+                visibleColors.push(PLANET_COLOR)
+              }
+              visibleTexts.push(planetsData[i].text)
+            } else {
+              console.warn(`Missing planet data for index ${i}`)
             }
           }
-        }, 500);
-      }, 800);
-    });
-  }
-});
 
-// Configurar el evento de cierre de la tarjeta
-document.querySelector('.close-button').addEventListener('click', closePlanetCard);
-document.getElementById('overlay').addEventListener('click', closePlanetCard);
+          // Actualizar la gráfica con los planetas visibles
+          Plotly.react(
+            'timeline',
+            [
+              {
+                x: visibleX,
+                y: visibleY,
+                mode: 'markers',
+                type: 'scatter',
+                marker: {
+                  size: visibleSizes,
+                  color: visibleColors,
+                  showscale: false,
+                  line: {
+                    color: 'rgba(100, 150, 255, 0.5)',
+                    width: 1,
+                  },
+                  opacity: 0.8,
+                  symbol: 'circle', // Asegurar que los puntos son círculos
+                },
+                text: visibleTexts,
+                hoverinfo: 'none', // No mostrar texto en hover
+              },
+            ],
+            layout,
+            {
+              transition: {
+                duration: 1200,
+                easing: 'cubic-bezier(0.34, 1.56, 0.64, 1)',
+              },
+              frame: {
+                duration: 1200,
+                redraw: false,
+              },
+            }
+          ).then(() => {
+            // Asegurarse de que el cursor esté configurado después de la actualización del gráfico
+            setPointCursor()
+          })
 
-// Función para manejar el botón "Previous"
-document.getElementById('prev').addEventListener('click', () => {
-  if (currentYearIndex > 0) {
-    currentYearIndex--;
-    updateTimeline();
-    animateButton('prev');
-  } else {
-    shakeButton('prev');
-  }
-});
+          // Configurar temporizador para mostrar la tarjeta del planeta actual después de 1 segundo
+          if (
+            !document
+              .getElementById('planet-card')
+              .classList.contains('visible')
+          ) {
+            planetCardTimer = setTimeout(() => {
+              console.log('Automatic timer showing card for:', planet.pl_name)
+              showPlanetCard(planet)
+              planetCardTimer = null // Limpiar referencia del temporizador después de la ejecución
+            }, 1000)
+          }
+        } else {
+          console.error('Invalid year index:', currentYearIndex)
+        }
+      }
 
-// Función para manejar el botón "Next"
-document.getElementById('next').addEventListener('click', () => {
-  if (currentYearIndex < filteredData.length - 1) {
-    currentYearIndex++;
-    updateTimeline();
-    animateButton('next');
-  } else {
-    shakeButton('next');
-  }
-});
+      /**
+       * FUNCIONES PARA INTERACCIÓN DE PLANETAS
+       */
+      // Configurar cursor y estilos para los puntos del gráfico
+      function setPointCursor() {
+        const points = document.querySelectorAll(
+          '#timeline .scatterlayer .trace .points path'
+        )
+        points.forEach((point) => {
+          // Establecer cursor pointer y preparar para efectos hover
+          point.style.cursor = 'pointer'
 
-// Función para animar un botón cuando se hace clic
-function animateButton(buttonId) {
-  const button = document.getElementById(buttonId);
-  button.style.transform = 'scale(1.2)';
-  button.style.boxShadow = '0 0 25px rgba(100, 150, 255, 0.8)';
+          // Asegurar que las transiciones estén aplicadas
+          if (!point.style.transition) {
+            point.style.transition =
+              'transform 0.3s ease-out, opacity 0.2s ease'
+          }
+        })
 
-  setTimeout(() => {
-    button.style.transform = 'scale(1)';
-    button.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(100, 150, 255, 0.3)';
-  }, 200);
-}
+        // También establecer cursor predeterminado para el fondo del gráfico
+        const plotBg = document.querySelector(
+          '#timeline .plot-container .svg-container'
+        )
+        if (plotBg) {
+          plotBg.style.cursor = 'default'
+        }
+      }
 
-// Función para agitar un botón cuando se llega al límite
-function shakeButton(buttonId) {
-  const button = document.getElementById(buttonId);
-  button.style.animation = 'shake 0.5s';
+      /**
+       * SCATTER PLOT VISUALIZATION
+       */
 
-  setTimeout(() => {
-    button.style.animation = '';
-  }, 500);
-}
+      function loadScatterPlotData() {
+        return fetch('all_exo.csv')
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`)
+            }
+            return response.text()
+          })
+          .then((csvText) => {
+            const lines = csvText.split('\n')
+            const headers = lines[0].split(',').map((header) => header.trim())
 
-// Keyboard navigation
-document.addEventListener('keydown', function(event) {
-  // Left arrow
-  if (event.key === 'ArrowLeft') {
-    if (currentYearIndex > 0) {
-      animateButton('prev');
-      currentYearIndex--;
-      updateTimeline();
-    } else {
-      shakeButton('prev');
-    }
-  }
-  // Right arrow
-  else if (event.key === 'ArrowRight') {
-    if (currentYearIndex < filteredData.length - 1) {
-      animateButton('next');
-      currentYearIndex++;
-      updateTimeline();
-    } else {
-      shakeButton('next');
-    }
-  }
-  // Escape key closes planet card
-  else if (event.key === 'Escape') {
-    closePlanetCard();
-  }
-});
-</script>
-</body>
+            // Parse CSV into objects
+            const planets = lines
+              .slice(1)
+              .filter((line) => line.trim())
+              .map((line) => {
+                // Basic CSV parsing
+                const values = line.split(',').map((val) => val.trim())
+                const planet = {}
+
+                headers.forEach((header, i) => {
+                  planet[header] = values[i]
+                })
+
+                return planet
+              })
+
+            return planets
+          })
+      }
+      function createScatterPlot() {
+        // Load data from all_exo.csv
+        fetch('all_exo.csv')
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error(`HTTP error! status: ${response.status}`)
+            }
+            return response.text()
+          })
+          .then((csvText) => {
+            const lines = csvText.split('\n')
+            const headers = lines[0].split(',').map((header) => header.trim())
+
+            // Parse CSV into objects
+            const planets = lines
+              .slice(1)
+              .filter((line) => line.trim())
+              .map((line) => {
+                // Basic CSV parsing
+                const values = line.split(',').map((val) => val.trim())
+                const planet = {}
+
+                headers.forEach((header, i) => {
+                  planet[header] = values[i]
+                })
+
+                return planet
+              })
+
+            // Get unique discovery methods for checkboxes
+            const discoveryMethods = [
+              ...new Set(
+                planets
+                  .filter((p) => p.discoverymethod)
+                  .map((p) => p.discoverymethod)
+              ),
+            ].sort()
+
+            const methodsContainer = document.getElementById(
+              'discovery-methods-container'
+            )
+
+            // Clear existing checkboxes
+            methodsContainer.innerHTML = ''
+
+            // Create checkboxes for each discovery method
+            discoveryMethods.forEach((method) => {
+              const methodDiv = document.createElement('div')
+              methodDiv.className = 'method-checkbox'
+
+              const checkbox = document.createElement('input')
+              checkbox.type = 'checkbox'
+              checkbox.id = `method-${method.replace(/\s+/g, '-')}`
+              checkbox.value = method
+              checkbox.checked = true // Default all selected
+
+              const label = document.createElement('label')
+              label.htmlFor = checkbox.id
+              label.textContent = method
+
+              methodDiv.appendChild(checkbox)
+              methodDiv.appendChild(label)
+              methodsContainer.appendChild(methodDiv)
+            })
+
+            // Get filter elements
+            const minYearSlider = document.getElementById('min-year')
+            const maxYearSlider = document.getElementById('max-year')
+            const minYearValue = document.getElementById('min-year-value')
+            const maxYearValue = document.getElementById('max-year-value')
+            const applyButton = document.getElementById('apply-filters')
+            const resetButton = document.getElementById('reset-filters')
+            const selectAllButton =
+              document.getElementById('select-all-methods')
+            const deselectAllButton = document.getElementById(
+              'deselect-all-methods'
+            )
+
+            // Set initial year range to match data
+            const years = planets
+              .map((p) => parseInt(p.disc_year))
+              .filter((y) => y && !isNaN(y))
+            if (years.length > 0) {
+              const minYear = Math.min(...years)
+              const maxYear = Math.max(...years)
+
+              minYearSlider.min = minYear
+              minYearSlider.value = minYear
+              minYearValue.textContent = minYear
+
+              maxYearSlider.min = minYear
+              maxYearSlider.max = maxYear
+              maxYearSlider.value = maxYear
+              maxYearValue.textContent = maxYear
+            }
+
+            // Update slider values on input
+            minYearSlider.addEventListener('input', () => {
+              const val = parseInt(minYearSlider.value)
+              minYearValue.textContent = val
+
+              // Ensure min doesn't exceed max
+              if (val > parseInt(maxYearSlider.value)) {
+                maxYearSlider.value = val
+                maxYearValue.textContent = val
+              }
+            })
+
+            maxYearSlider.addEventListener('input', () => {
+              const val = parseInt(maxYearSlider.value)
+              maxYearValue.textContent = val
+
+              // Ensure max doesn't go below min
+              if (val < parseInt(minYearSlider.value)) {
+                minYearSlider.value = val
+                minYearValue.textContent = val
+              }
+            })
+
+            // Select/deselect all methods
+            selectAllButton.addEventListener('click', () => {
+              document
+                .querySelectorAll(
+                  '#discovery-methods-container input[type="checkbox"]'
+                )
+                .forEach((checkbox) => {
+                  checkbox.checked = true
+                })
+            })
+
+            deselectAllButton.addEventListener('click', () => {
+              document
+                .querySelectorAll(
+                  '#discovery-methods-container input[type="checkbox"]'
+                )
+                .forEach((checkbox) => {
+                  checkbox.checked = false
+                })
+            })
+
+            // Store planets data globally for use in updateScatterPlot
+            window.csvPlanetsData = planets
+
+            // Initial creation of scatter plot
+            updateScatterPlot()
+
+            // Apply filters when button is clicked
+            applyButton.addEventListener('click', updateScatterPlot)
+
+            // Reset filters to default
+            resetButton.addEventListener('click', () => {
+              minYearSlider.value = minYearSlider.min
+              maxYearSlider.value = maxYearSlider.max
+
+              minYearValue.textContent = minYearSlider.min
+              maxYearValue.textContent = maxYearSlider.max
+
+              // Select all discovery methods
+              document
+                .querySelectorAll(
+                  '#discovery-methods-container input[type="checkbox"]'
+                )
+                .forEach((checkbox) => {
+                  checkbox.checked = true
+                })
+
+              updateScatterPlot()
+            })
+          })
+          .catch((error) => {
+            console.error('Error loading scatter plot data:', error)
+          })
+      }
+
+      function updateScatterPlot() {
+        // Get current filter values
+        const minYear = parseInt(document.getElementById('min-year').value)
+        const maxYear = parseInt(document.getElementById('max-year').value)
+
+        // Get all selected discovery methods
+        const selectedMethods = []
+        document
+          .querySelectorAll(
+            '#discovery-methods-container input[type="checkbox"]:checked'
+          )
+          .forEach((checkbox) => {
+            selectedMethods.push(checkbox.value)
+          })
+
+        // Make sure we have data to work with
+        if (!window.csvPlanetsData) {
+          console.error('CSV data not loaded yet')
+          return
+        }
+
+        // Filter data based on selected criteria
+        const filteredPlanets = window.csvPlanetsData.filter((planet) => {
+          // Filter by year
+          const year = parseInt(planet.disc_year)
+          if (isNaN(year) || year < minYear || year > maxYear) return false
+
+          // Filter by discovery method
+          if (
+            selectedMethods.length > 0 &&
+            planet.discoverymethod &&
+            !selectedMethods.includes(planet.discoverymethod)
+          )
+            return false
+
+          // Include planets that have ESI and orbit data
+          const esi = parseFloat(planet.ESI)
+          const orbsmax = parseFloat(planet.pl_orbsmax)
+          return !isNaN(esi) && !isNaN(orbsmax)
+        })
+
+        document.getElementById('planet-count').textContent =
+          filteredPlanets.length
+
+        // Create scatter data - ESI vs Orbital Distance
+        const scatterData = [
+          {
+            x: filteredPlanets.map((planet) => parseFloat(planet.pl_orbsmax)),
+            y: filteredPlanets.map((planet) => parseFloat(planet.ESI)),
+            mode: 'markers',
+            type: 'scatter',
+            marker: {
+              size: 12,
+              color: filteredPlanets.map((planet) =>
+                parseInt(planet.disc_year)
+              ),
+              colorscale: 'Viridis',
+              colorbar: {
+                title: 'Discovery Year',
+                titlefont: { color: '#adf' },
+                tickfont: { color: '#adf' },
+              },
+              line: { color: 'white', width: 1 },
+              opacity: 0.9,
+            },
+            text: filteredPlanets.map(
+              (planet) =>
+                `${planet.pl_name}<br>ESI: ${parseFloat(planet.ESI).toFixed(
+                  2
+                )}<br>` +
+                `Radio: ${
+                  planet.pl_rade
+                    ? parseFloat(planet.pl_rade).toFixed(2)
+                    : 'Unknown'
+                } R⊕<br>` +
+                `Distancia orbital: ${parseFloat(planet.pl_orbsmax).toFixed(
+                  3
+                )} AU<br>` +
+                `Año: ${planet.disc_year}<br>` +
+                `Método: ${planet.discoverymethod || 'Unknown'}`
+            ),
+            hoverinfo: 'text',
+          },
+        ]
+
+        // Layout settings with FIXED axes
+        const scatterLayout = {
+          title: {
+            text: 'ESI (Earth Similiraty Index )vs Orbital Distance',
+            font: { color: '#FFD700', size: 22 },
+            y: 0.97,
+          },
+          paper_bgcolor: 'rgba(0,0,0,0)',
+          plot_bgcolor: 'rgba(0,0,0,0)',
+          showlegend: false,
+
+          // FIXED X-AXIS CONFIGURATION
+          xaxis: {
+            title: {
+              text: 'Orbital Distnace (AU)',
+              font: { color: '#adf', size: 16 },
+            },
+            type: 'linear',
+            showgrid: true,
+            gridcolor: 'rgba(100, 150, 255, 0.2)',
+            zeroline: false,
+            tickfont: { color: '#adf', size: 14 },
+            fixedrange: true,
+            autorange: false,
+            range: [0, 1.5], // Smaller range to focus where most planets are
+            tickmode: 'array',
+            tickvals: [0, 0.25, 0.5, 0.75, 1.0, 1.25, 1.5],
+            ticktext: ['0', '0.25', '0.5', '0.75', '1.0', '1.25', '1.5'],
+          },
+
+          // FIXED Y-AXIS CONFIGURATION
+          yaxis: {
+            title: {
+              text: 'Earth Similarity Index (ESI)',
+              font: { color: '#adf', size: 16 },
+            },
+            type: 'linear',
+            showgrid: true,
+            gridcolor: 'rgba(100, 150, 255, 0.2)',
+            zeroline: false,
+            tickfont: { color: '#adf', size: 14 },
+            fixedrange: true,
+            autorange: false,
+            range: [0, 1], // ESI ranges from 0 to 1
+            tickmode: 'array',
+            tickvals: [0, 0.2, 0.4, 0.6, 0.8, 1.0],
+            ticktext: ['0', '0.2', '0.4', '0.6', '0.8', '1.0'],
+          },
+
+          hovermode: 'closest',
+          hoverlabel: {
+            bgcolor: 'rgba(20, 40, 80, 0.9)',
+            bordercolor: '#adf',
+            font: { color: '#fff', size: 14 },
+          },
+          margin: { l: 70, r: 40, t: 70, b: 70 },
+
+          shapes: [
+            // Habitable zone
+            {
+              type: 'rect',
+              xref: 'x',
+              yref: 'paper',
+              x0: 0.75,
+              x1: 1.5,
+              y0: 0,
+              y1: 1,
+              fillcolor: 'rgba(0, 255, 0, 0.1)',
+              line: {
+                width: 1,
+                color: 'rgba(0, 255, 0, 0.3)',
+              },
+              layer: 'below',
+            },
+            // High habitability threshold (ESI > 0.8)
+            {
+              type: 'line',
+              xref: 'paper',
+              yref: 'y',
+              x0: 0,
+              x1: 1,
+              y0: 0.8,
+              y1: 0.8,
+              line: {
+                color: 'rgba(0, 255, 255, 0.5)',
+                width: 1,
+                dash: 'dash',
+              },
+            },
+          ],
+          annotations: [
+            {
+              text: 'Inhabitable zone (0.75-1.5 AU)',
+              showarrow: false,
+              font: { color: 'rgba(0, 255, 0, 0.8)', size: 12 },
+              x: 1.1,
+              y: 0.5,
+              xanchor: 'left',
+              yanchor: 'middle',
+            },
+          ],
+        }
+
+        const config = {
+          responsive: true,
+          displayModeBar: false,
+          staticPlot: false,
+        }
+
+        Plotly.react('scatter-plot', scatterData, scatterLayout, config)
+
+        // Set point cursor and custom hover effects
+        setTimeout(() => {
+          const points = document.querySelectorAll(
+            '#scatter-plot .scatterlayer .trace .points path'
+          )
+          points.forEach((point, index) => {
+            point.style.cursor = 'pointer'
+
+            // Add click event to show planet details on click
+            point.addEventListener('click', function (event) {
+              if (index >= 0 && index < filteredPlanets.length) {
+                showPlanetCard(filteredPlanets[index])
+              }
+            })
+          })
+        }, 500)
+      }
+      // Function to show and animate the planet card
+      function showPlanetCard(planet) {
+        if (!planet) {
+          console.error(
+            'showPlanetCard called with invalid planet data:',
+            planet
+          )
+          return
+        }
+
+        const planetCard = document.getElementById('planet-card')
+        const overlay = document.getElementById('overlay')
+
+        // Update basic content
+        planetCard.querySelector('.planet-name').textContent =
+          planet.pl_name || 'Unknown Planet'
+
+        // Basic info (tab 1)
+        document.getElementById('disc-year').textContent =
+          planet.disc_year || 'Unknown'
+
+        // ESI (calculated value)
+        const esiValue =
+          typeof planet.ESI === 'number' && !isNaN(planet.ESI)
+            ? planet.ESI.toFixed(2)
+            : 'N/A'
+        document.getElementById('esi-value').textContent = esiValue
+
+        // Radius
+        document.getElementById('radius-value').innerHTML = planet.pl_rade
+          ? `${planet.pl_rade.toFixed(2)} Times Earth`
+          : 'Unknown'
+
+        // Mass
+        document.getElementById('mass-value').innerHTML = planet.pl_bmasse
+          ? `${planet.pl_bmasse.toFixed(2)} Times Earth`
+          : 'Unknown'
+
+        // Temperature
+        document.getElementById('temp-value').textContent = planet.pl_eqt
+          ? `${planet.pl_eqt} K`
+          : 'Unknown'
+
+        // Discovery facility
+        document.getElementById('facility-value').textContent =
+          planet.disc_facility || 'Unknown'
+
+        // System info (tab 2)
+        document.getElementById('hostname-value').textContent =
+          planet.hostname || 'Unknown'
+        document.getElementById('sysnum-value').textContent =
+          planet.sy_snum || 'Unknown'
+        document.getElementById('sypnum-value').textContent =
+          planet.sy_pnum || 'Unknown'
+
+        if (planet.pl_refname) {
+          const hrefMatch = planet.pl_refname.match(/href=([^ >]+)/)
+          if (hrefMatch) {
+            const url = hrefMatch[1]
+            document.getElementById(
+              'refname-value'
+            ).innerHTML = `<a href="${url}" target="_blank">Reference</a>`
+          } else {
+            document.getElementById('refname-value').textContent =
+              'NASA Exoplanet Archive'
+          }
+        } else {
+          document.getElementById('refname-value').textContent =
+            'NASA Exoplanet Archive'
+        }
+
+        document.getElementById('distance-value').textContent = planet.sy_dist
+          ? `${planet.sy_dist.toFixed(1)} pc`
+          : 'Unknown'
+
+        // Orbit info (tab 3)
+        document.getElementById('orbper-value').textContent = planet.pl_orbper
+          ? `${planet.pl_orbper.toFixed(1)} days`
+          : 'Unknown'
+        document.getElementById('orbsmax-value').textContent = planet.pl_orbsmax
+          ? `${planet.pl_orbsmax.toFixed(3)} AU`
+          : 'Unknown'
+
+        // Generate planet image and type label
+        generatePlanetImage(planet)
+
+        // Show the card and overlay with animation
+        overlay.classList.add('active')
+        planetCard.classList.add('visible')
+      }
+
+      // Función para cerrar la tarjeta del planeta
+      function closePlanetCard() {
+        const planetCard = document.getElementById('planet-card')
+        const overlay = document.getElementById('overlay')
+
+        planetCard.classList.remove('visible')
+        overlay.classList.remove('active')
+      }
+
+      /**
+       * 3D PLANET VISUALIZATION
+       */
+      function generatePlanetImage(planet) {
+        const container = document.querySelector('.planet-image-container')
+
+        // Clear any previous 3D renderers and elements
+        while (container.firstChild) {
+          container.firstChild.remove()
+        }
+
+        // Create planet type label first
+        const planetType = document.createElement('div')
+        planetType.className = 'planet-type'
+        container.appendChild(planetType)
+
+        // Extract planet properties with defaults
+        const esiNum =
+          typeof planet.ESI === 'number' && !isNaN(planet.ESI) ? planet.ESI : -1
+        const temperature = planet.pl_eqt || 300 // Default if unknown
+        const radius = planet.pl_rade || 1 // Default if unknown
+        const mass = planet.pl_bmasse || 1 // Default if unknown
+        const orbitalPeriod = planet.pl_orbper || 365 // Default if unknown
+
+        // Set planet type based on ESI
+        if (esiNum >= 0.8) {
+          planetType.textContent = 'Earth-like'
+          planetType.style.backgroundColor = 'rgba(0, 255, 0, 0.8)'
+        } else if (esiNum >= 0.6) {
+          planetType.textContent = 'Semi-habitable'
+          planetType.style.backgroundColor = 'rgba(255, 215, 0, 0.8)'
+        } else if (esiNum >= 0) {
+          planetType.textContent = 'Exotic'
+          planetType.style.backgroundColor = 'rgba(255, 165, 0, 0.8)'
+        } else {
+          planetType.textContent = 'Unknown'
+          planetType.style.backgroundColor = 'rgba(128, 128, 128, 0.8)'
+        }
+
+        // Add card shine effect
+        const cardShine = document.createElement('div')
+        cardShine.className = 'card-shine'
+        container.appendChild(cardShine)
+
+        // Scene setup
+        const scene = new THREE.Scene()
+        const camera = new THREE.PerspectiveCamera(75, 1, 0.1, 1000)
+        camera.position.z = 2
+
+        // Create renderer
+        const renderer = new THREE.WebGLRenderer({
+          antialias: true,
+          alpha: true,
+        })
+        renderer.setSize(180, 180)
+        renderer.setClearColor(0x000000, 0) // Transparent background
+        container.appendChild(renderer.domElement)
+
+        // Create planet geometry - size based on radius
+        const geometry = new THREE.SphereGeometry(1, 32, 32)
+
+        // Create planet material based on ESI and other properties
+        let planetMaterial
+        let atmosphereColor
+
+        if (esiNum >= 0.8) {
+          // Earth-like planet
+          planetMaterial = createEarthLikeMaterial(planet)
+          atmosphereColor = new THREE.Color(
+            0.55 - Math.min(0.3, (temperature - 250) / 500), // More blue for cooler planets
+            0.8,
+            1.0
+          )
+        } else if (esiNum >= 0.6) {
+          // Semi-habitable planet
+          planetMaterial = createSemiHabitableMaterial(planet)
+          atmosphereColor = new THREE.Color(
+            0.7,
+            0.7 + Math.min(0.3, (temperature - 250) / 1000), // More green for warmer planets
+            0.8
+          )
+        } else {
+          // Less Earth-like
+          planetMaterial = createAlienPlanetMaterial(planet)
+          atmosphereColor = new THREE.Color(
+            0.9 + Math.min(0.1, (temperature - 400) / 1000), // More red for hotter planets
+            0.6 - Math.min(0.3, (temperature - 300) / 700),
+            0.4 - Math.min(0.3, (temperature - 300) / 1000)
+          )
+        }
+
+        // Create planet mesh
+        const planet3D = new THREE.Mesh(geometry, planetMaterial)
+        scene.add(planet3D)
+
+        // Add atmosphere glow with size based on radius
+        const atmosphereSize = 1.05 + radius * 0.05 // Bigger planets have thicker atmospheres
+        const atmosphereGeometry = new THREE.SphereGeometry(
+          atmosphereSize,
+          32,
+          32
+        )
+        const atmosphereMaterial = new THREE.MeshBasicMaterial({
+          color: atmosphereColor,
+          transparent: true,
+          opacity: 0.2,
+        })
+        const atmosphere = new THREE.Mesh(
+          atmosphereGeometry,
+          atmosphereMaterial
+        )
+        scene.add(atmosphere)
+
+        // Add ambient light
+        const ambientLight = new THREE.AmbientLight(0x404040)
+        scene.add(ambientLight)
+
+        // Add directional light (sun)
+        const directionalLight = new THREE.DirectionalLight(0xffffff, 1)
+        directionalLight.position.set(5, 3, 5)
+        scene.add(directionalLight)
+
+        // Animation function - adjust rotation based on orbital period
+        const rotationSpeed = 0.005 * (365 / Math.max(50, orbitalPeriod))
+        function animate() {
+          requestAnimationFrame(animate)
+
+          // Rotate planet - faster rotation for shorter orbital periods
+          planet3D.rotation.y += rotationSpeed
+          atmosphere.rotation.y += rotationSpeed * 0.4
+
+          renderer.render(scene, camera)
+        }
+
+        // Start animation
+        animate()
+
+        // Create different materials based on planet type and properties
+        function createEarthLikeMaterial(planet) {
+          const planetName = planet.pl_name || ''
+          const temperature = planet.pl_eqt || 300
+          const radius = planet.pl_rade || 1
+          const mass = planet.pl_bmasse || 1
+
+          // Use consistent seed for each planet name
+          const seed = hashString(planetName)
+          const seededRandom = createSeededRandom(seed)
+
+          // Create a procedurally generated Earth-like texture
+          const canvas = document.createElement('canvas')
+          canvas.width = 512
+          canvas.height = 256
+          const ctx = canvas.getContext('2d')
+
+          // Base ocean color - adjust based on temperature
+          const blueValue =
+            200 + Math.min(55, Math.max(-55, (300 - temperature) * 0.5))
+          ctx.fillStyle = `rgb(28, ${Math.max(
+            80,
+            106 + (300 - temperature) * 0.1
+          )}, ${blueValue})`
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+          // Generate continents - more for higher mass
+          const continentCount = 5 + Math.floor(mass)
+          const continentColor = `rgb(${39 + (temperature - 280) * 0.1}, ${
+            160 + (300 - temperature) * 0.1
+          }, ${70 + (300 - temperature) * 0.2})`
+          ctx.fillStyle = continentColor
+
+          for (let i = 0; i < continentCount; i++) {
+            const x = seededRandom() * canvas.width
+            const y = seededRandom() * canvas.height
+            const size = 30 + seededRandom() * 80
+
+            // Draw irregular continent shape
+            ctx.beginPath()
+            for (let j = 0; j < 10; j++) {
+              const angle = (j / 10) * Math.PI * 2
+              const radius = size * (0.7 + seededRandom() * 0.6)
+              const xPoint = x + Math.cos(angle) * radius
+              const yPoint = y + Math.sin(angle) * radius
+
+              if (j === 0) {
+                ctx.moveTo(xPoint, yPoint)
+              } else {
+                ctx.lineTo(xPoint, yPoint)
+              }
+            }
+            ctx.closePath()
+            ctx.fill()
+          }
+
+          // Adjust ice caps based on temperature
+          const iceCapsSize = Math.max(0, (350 - temperature) * 0.001)
+          if (iceCapsSize > 0) {
+            ctx.fillStyle = '#ffffff'
+            ctx.fillRect(0, 0, canvas.width, canvas.height * iceCapsSize)
+            ctx.fillRect(
+              0,
+              canvas.height * (1 - iceCapsSize),
+              canvas.width,
+              canvas.height * iceCapsSize
+            )
+          }
+
+          // Create texture from canvas
+          const texture = new THREE.CanvasTexture(canvas)
+
+          // Create material with texture
+          return new THREE.MeshStandardMaterial({
+            map: texture,
+            roughness: 0.7,
+            metalness: 0.1,
+          })
+        }
+
+        function createSemiHabitableMaterial(planet) {
+          const planetName = planet.pl_name || ''
+          const temperature = planet.pl_eqt || 300
+          const radius = planet.pl_rade || 1
+          const mass = planet.pl_bmasse || 1
+
+          // Use consistent seed for each planet name
+          const seed = hashString(planetName)
+          const seededRandom = createSeededRandom(seed)
+
+          // Create a procedurally generated texture
+          const canvas = document.createElement('canvas')
+          canvas.width = 512
+          canvas.height = 256
+          const ctx = canvas.getContext('2d')
+
+          // Base surface color based on temperature
+          const redValue =
+            185 + Math.min(70, Math.max(-50, (temperature - 300) * 0.4))
+          const greenValue =
+            118 + Math.min(40, Math.max(-50, (300 - temperature) * 0.2))
+          ctx.fillStyle = `rgb(${redValue}, ${greenValue}, 64)`
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+          // Generate vegetation patches - more for moderate temperatures
+          const vegetationCount = Math.max(
+            5,
+            15 - Math.abs(temperature - 300) / 20
+          )
+          const vegetationColor = `rgb(${93 + (temperature - 300) * 0.2}, ${
+            148 + (300 - temperature) * 0.3
+          }, ${81 - Math.abs(temperature - 300) * 0.1})`
+          ctx.fillStyle = vegetationColor
+
+          for (let i = 0; i < vegetationCount; i++) {
+            const x = seededRandom() * canvas.width
+            const y = seededRandom() * canvas.height
+            const size = 10 + seededRandom() * (40 * (radius / 2))
+
+            ctx.beginPath()
+            ctx.arc(x, y, size, 0, Math.PI * 2)
+            ctx.fill()
+          }
+
+          // Add water bodies - fewer for hotter planets
+          const waterCount = Math.max(2, 8 - (temperature - 280) / 40)
+          const waterColor = `rgb(65, ${Math.max(
+            100,
+            135 - (temperature - 280) * 0.3
+          )}, ${Math.max(120, 170 - (temperature - 280) * 0.5)})`
+          ctx.fillStyle = waterColor
+
+          for (let i = 0; i < waterCount; i++) {
+            const x = seededRandom() * canvas.width
+            const y = seededRandom() * canvas.height
+            const size = 20 + seededRandom() * (60 * mass)
+
+            ctx.beginPath()
+            ctx.arc(x, y, size, 0, Math.PI * 2)
+            ctx.fill()
+          }
+
+          // Add temperature-based features
+          if (temperature > 350) {
+            // Add lava flow or hot spots for hot planets
+            ctx.fillStyle = `rgba(255, ${120 + seededRandom() * 50}, 30, 0.7)`
+            for (let i = 0; i < 8; i++) {
+              const x = seededRandom() * canvas.width
+              const y = seededRandom() * canvas.height
+              const size = 5 + seededRandom() * 20
+
+              ctx.beginPath()
+              ctx.arc(x, y, size, 0, Math.PI * 2)
+              ctx.fill()
+            }
+          }
+
+          // Create texture from canvas
+          const texture = new THREE.CanvasTexture(canvas)
+
+          // Create material with texture
+          return new THREE.MeshStandardMaterial({
+            map: texture,
+            roughness: 0.8,
+            metalness: 0.2,
+          })
+        }
+
+        function createAlienPlanetMaterial(planet) {
+          const planetName = planet.pl_name || ''
+          const temperature = planet.pl_eqt || 300
+          const radius = planet.pl_rade || 1
+          const mass = planet.pl_bmasse || 1
+
+          // Use consistent seed for each planet name
+          const seed = hashString(planetName)
+          const seededRandom = createSeededRandom(seed)
+
+          // Create a procedurally generated texture
+          const canvas = document.createElement('canvas')
+          canvas.width = 512
+          canvas.height = 256
+          const ctx = canvas.getContext('2d')
+
+          // Base planet color - adjusted based on temperature
+          const redBase = 140 + Math.min(115, (temperature - 200) / 3)
+          const greenBase = Math.max(30, 80 + (350 - temperature) * 0.2)
+          const blueBase = Math.max(20, 40 + (350 - temperature) * 0.15)
+
+          const baseColor = `rgb(${redBase}, ${greenBase}, ${blueBase})`
+          ctx.fillStyle = baseColor
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+          // Create bands - more for larger planets
+          const numberOfBands = 2 + Math.floor(radius * 0.8)
+          for (let i = 0; i < numberOfBands; i++) {
+            // Color for the band based on temperature and position
+            const bandRed = Math.min(255, redBase + 40 + seededRandom() * 35)
+            const bandGreen = Math.min(
+              255,
+              greenBase + 40 + seededRandom() * 30
+            )
+            const bandBlue = Math.min(255, blueBase + 20 + seededRandom() * 20)
+
+            const bandColor = `rgba(${bandRed}, ${bandGreen}, ${bandBlue}, 0.7)`
+            ctx.fillStyle = bandColor
+
+            // Position and size of band
+            const yPos = i * (canvas.height / numberOfBands)
+            const height =
+              canvas.height / (numberOfBands * (1 + seededRandom()))
+
+            ctx.fillRect(0, yPos, canvas.width, height)
+          }
+
+          // Add craters/spots - more for massive planets
+          const spotCount = 20 + Math.floor(mass * 10)
+          const spotColor = `rgba(${Math.min(255, redBase - 60)}, ${Math.max(
+            0,
+            greenBase - 40
+          )}, ${Math.max(0, blueBase - 20)}, 0.6)`
+          ctx.fillStyle = spotColor
+
+          for (let i = 0; i < spotCount; i++) {
+            const x = seededRandom() * canvas.width
+            const y = seededRandom() * canvas.height
+            const size = 2 + seededRandom() * 15
+
+            ctx.beginPath()
+            ctx.arc(x, y, size, 0, Math.PI * 2)
+            ctx.fill()
+          }
+
+          // For very hot planets, add more bright areas
+          if (temperature > 600) {
+            ctx.fillStyle = `rgba(255, 200, 100, 0.3)`
+            for (let i = 0; i < 5; i++) {
+              const x = seededRandom() * canvas.width
+              const y = seededRandom() * canvas.height
+              const size = 10 + seededRandom() * 30
+
+              ctx.beginPath()
+              ctx.arc(x, y, size, 0, Math.PI * 2)
+              ctx.fill()
+            }
+          }
+
+          // For very large planets, add "storm" features
+          if (radius > 3) {
+            ctx.fillStyle = `rgba(255, 255, 255, 0.2)`
+            const stormX = seededRandom() * canvas.width
+            const stormY = seededRandom() * canvas.height
+            const stormSize = 30 + seededRandom() * 50
+
+            ctx.beginPath()
+            ctx.arc(stormX, stormY, stormSize, 0, Math.PI * 2)
+            ctx.fill()
+
+            // Add swirl in storm
+            const swirls = 5 + Math.floor(seededRandom() * 5)
+            ctx.strokeStyle = `rgba(255, 255, 255, 0.3)`
+            ctx.lineWidth = 2
+
+            for (let i = 0; i < swirls; i++) {
+              const swirlRadius = (i / swirls) * stormSize
+              ctx.beginPath()
+              ctx.arc(
+                stormX,
+                stormY,
+                swirlRadius,
+                0,
+                Math.PI * (1.5 + seededRandom())
+              )
+              ctx.stroke()
+            }
+          }
+
+          // Create texture from canvas
+          const texture = new THREE.CanvasTexture(canvas)
+
+          // Create material with texture
+          return new THREE.MeshStandardMaterial({
+            map: texture,
+            roughness: 0.9,
+            metalness: 0.3,
+          })
+        }
+
+        // Helper functions for consistent planet generation
+        function hashString(str) {
+          let hash = 0
+          if (!str) str = 'defaultSeed'
+          for (let i = 0; i < str.length; i++) {
+            const char = str.charCodeAt(i)
+            hash = (hash << 5) - hash + char
+            hash = hash & hash
+          }
+          return hash
+        }
+
+        function createSeededRandom(seed) {
+          return function () {
+            const x = Math.sin(seed++) * 10000
+            return x - Math.floor(x)
+          }
+        }
+      }
+
+      // Manejar las pestañas de la tarjeta del planeta
+      document.addEventListener('DOMContentLoaded', function () {
+        const tabButtons = document.querySelectorAll('.tab-button')
+
+        tabButtons.forEach((button) => {
+          button.addEventListener('click', function () {
+            // Desactivar todos los botones y ocultar contenido
+            tabButtons.forEach((btn) => btn.classList.remove('active'))
+            document
+              .querySelectorAll('.tab-content')
+              .forEach((tab) => tab.classList.add('hidden'))
+
+            // Activar el botón seleccionado y mostrar su contenido
+            button.classList.add('active')
+            const tabId = button.getAttribute('data-tab')
+            document.getElementById(`${tabId}-tab`).classList.remove('hidden')
+          })
+        })
+
+        // Start button click handler
+        const startButton = document.getElementById('start-button')
+        const splashScreen = document.getElementById('splash-screen')
+
+        if (startButton && splashScreen) {
+          startButton.addEventListener('click', function () {
+            // Hide splash screen with animation
+            splashScreen.classList.add('hidden')
+
+            // Show content with delay
+            setTimeout(() => {
+              document
+                .querySelectorAll('.content-container')
+                .forEach((container) => {
+                  container.classList.add('visible')
+                })
+
+              // Re-initialize the visualization after showing the content
+              setTimeout(() => {
+                if (
+                  typeof Plotly !== 'undefined' &&
+                  document.getElementById('timeline')
+                ) {
+                  Plotly.react(
+                    'timeline',
+                    [
+                      {
+                        x: [],
+                        y: [],
+                        mode: 'markers',
+                        type: 'scatter',
+                        marker: {
+                          size: [],
+                          color: PLANET_COLOR,
+                          showscale: false,
+                          line: {
+                            color: 'rgba(100, 150, 255, 0.5)',
+                            width: 1,
+                          },
+                          opacity: 0.8,
+                        },
+                        text: [],
+                        hoverinfo: 'none',
+                      },
+                    ],
+                    layout,
+                    config
+                  )
+
+                  // If data is already loaded, update the timeline
+                  if (filteredData && filteredData.length > 0) {
+                    updateTimeline()
+                  }
+                }
+              }, 500)
+            }, 800)
+          })
+        }
+      })
+
+      // Configurar el evento de cierre de la tarjeta
+      document
+        .querySelector('.close-button')
+        .addEventListener('click', closePlanetCard)
+      document
+        .getElementById('overlay')
+        .addEventListener('click', closePlanetCard)
+
+      // Función para manejar el botón "Previous"
+      document.getElementById('prev').addEventListener('click', () => {
+        if (currentYearIndex > 0) {
+          currentYearIndex--
+          updateTimeline()
+          animateButton('prev')
+        } else {
+          shakeButton('prev')
+        }
+      })
+
+      // Función para manejar el botón "Next"
+      document.getElementById('next').addEventListener('click', () => {
+        if (currentYearIndex < filteredData.length - 1) {
+          currentYearIndex++
+          updateTimeline()
+          animateButton('next')
+        } else {
+          shakeButton('next')
+        }
+      })
+
+      // Función para animar un botón cuando se hace clic
+      function animateButton(buttonId) {
+        const button = document.getElementById(buttonId)
+        button.style.transform = 'scale(1.2)'
+        button.style.boxShadow = '0 0 25px rgba(100, 150, 255, 0.8)'
+
+        setTimeout(() => {
+          button.style.transform = 'scale(1)'
+          button.style.boxShadow =
+            '0 4px 10px rgba(0, 0, 0, 0.5), 0 0 15px rgba(100, 150, 255, 0.3)'
+        }, 200)
+      }
+
+      // Función para agitar un botón cuando se llega al límite
+      function shakeButton(buttonId) {
+        const button = document.getElementById(buttonId)
+        button.style.animation = 'shake 0.5s'
+
+        setTimeout(() => {
+          button.style.animation = ''
+        }, 500)
+      }
+
+      // Keyboard navigation
+      document.addEventListener('keydown', function (event) {
+        // Left arrow
+        if (event.key === 'ArrowLeft') {
+          if (currentYearIndex > 0) {
+            animateButton('prev')
+            currentYearIndex--
+            updateTimeline()
+          } else {
+            shakeButton('prev')
+          }
+        }
+        // Right arrow
+        else if (event.key === 'ArrowRight') {
+          if (currentYearIndex < filteredData.length - 1) {
+            animateButton('next')
+            currentYearIndex++
+            updateTimeline()
+          } else {
+            shakeButton('next')
+          }
+        }
+        // Escape key closes planet card
+        else if (event.key === 'Escape') {
+          closePlanetCard()
+        }
+      })
+    </script>
+  </body>
 </html>
