@@ -14,5 +14,13 @@ def timeline_data():
 def csv_data():
     return send_from_directory('.', 'all_exo.csv')
 
+@app.route('/styles.css')
+def styles():
+    return send_from_directory('.', 'styles.css')
+
+@app.route('/timeline.js')
+def timeline_js():
+    return send_from_directory('.', 'timeline.js')
+
 if __name__ == '__main__':
     app.run(debug=True)

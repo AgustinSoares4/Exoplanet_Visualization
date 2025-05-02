@@ -1,1 +1,0 @@
-Para ejecutar pues normal con python y ejecutar "pip install -r requirements.txt" para instalar dependencias
